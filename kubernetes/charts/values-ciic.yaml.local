@@ -1,0 +1,21 @@
+# =============  自定义配置  ============= #
+
+# 副本数
+replicas: 1
+# 域名
+host: chajian.ciicsh.com
+# 证书
+secretName: null
+# nginx class
+nginxClass: nginx
+# 是否强制https
+forceHttps: false
+# 是否开启认证
+enableAuth: false
+# 是否开启跨域
+enableCors: false
+# 跨域源
+# corsAllowOrigin: https://*.nadileaf.com, https://*.mesoor.com
+
+# =============  自定义配置  ============= #
+

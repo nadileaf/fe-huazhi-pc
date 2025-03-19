@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fe-ciickd-pc
+  annotations:
+    kubernetes.io/ingress.class: tip
+    nginx.ingress.kubernetes.io/proxy-body-size: 512m
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: '300'
+    nginx.ingress.kubernetes.io/proxy-read-timeout: '300'
+    nginx.ingress.kubernetes.io/proxy-send-timeout: '300'
+    ingress.kubernetes.io/ssl-redirect: 'true'
+    ingress.kubernetes.io/force-hsts: 'true'
+    ingress.kubernetes.io/hsts-max-age: '315360000'
+    ingress.kubernetes.io/hsts-include-subdomains: 'true'
+    ingress.kubernetes.io/hsts-preload: 'true'
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/enable-real-ip: "true"
+    nginx.ingress.kubernetes.io/enable-cors: 'true'
+    
+spec:
+  tls:
+    - secretName: nadileaf-tls
+  rules:
+    - host: 'exyc.nadileaf.com'
+      http:
+        paths:
+          - path: /(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: dev-fe-ciickd-pc
+                port:
+                  number: 80
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dev-fe-ciickd-pc
+                port:
+                  number: 80

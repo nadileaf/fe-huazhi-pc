@@ -1,0 +1,10 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fe-ciickd-pc
+spec:
+  template:
+    spec:
+      containers:
+        - name: fe-ciickd-pc
+          image: cr.mesoor.com/develop/fe-ciickd-pc:init

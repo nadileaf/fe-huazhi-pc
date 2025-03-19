@@ -1,0 +1,7 @@
+commonLabels:
+  app: fe-ciickd-pc
+
+resources:
+  - deployment.yaml
+  - service.yaml
+  - ingress.yaml

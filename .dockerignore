@@ -1,0 +1,9 @@
+dist
+build
+.next/
+node_modules
+.env.*.local
+.git
+.gitignore
+.github
+.vscode

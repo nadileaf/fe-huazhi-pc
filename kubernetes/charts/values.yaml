@@ -1,0 +1,77 @@
+# Default values for fe-ciickd-pc.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+
+# =============  自定义配置  ============= #
+# 镜像地址
+image: 
+  repository: cr.mesoor.com/production/fe-ciickd-pc
+  tag: 0.0.1
+  
+# 副本数
+replicas: 2
+# 域名
+host: www.exiaoyoucai.com
+# 证书
+secretName: mesoor-tls
+# nginx class
+nginxClass: nginx
+# 是否强制https
+forceHttps: true
+# 是否开启认证
+enableAuth: true
+# 是否开启跨域
+enableCors: true
+# 跨域源
+corsAllowOrigin: https://*.nadileaf.com, https://*.mesoor.com
+
+# =============  自定义配置  ============= #
+
+
+
+
+# namespace: 'tip'
+
+deployment:
+  resources:
+    limits:
+      cpu: '0.1'
+      memory: '500Mi'
+  nodeSelector: {}
+  autoscaling:
+    enabled: false
+    
+  podAnnotations:
+    sidecar.istio.io/inject: 'false'
+
+  imagePullSecrets: []
+
+  podSecurityContext: {}
+  # fsGroup: 2000
+  securityContext: {}
+  tolerations: []
+  affinity: {} 
+
+service:
+  type: ClusterIP
+  port: 80
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ''
+
+
+
+
+
+
+
+
+
+
