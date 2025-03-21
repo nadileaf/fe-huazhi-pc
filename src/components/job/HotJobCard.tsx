@@ -1,28 +1,33 @@
-import Tag from '@/components/basic/Tag';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import {
   formatLocation,
   formatNumberRange,
   formatSalaryRange,
   formatStringArray,
 } from '@/utils/format';
-import { generateUrl } from '@/utils/common';
-import { get } from 'lodash-es';
 import { Icon } from '@iconify/react';
-import { Button, Chip } from '@nextui-org/react';
+import { Chip } from '@nextui-org/react';
 
 type Props<T extends EntityModel.BusinessEntity<'Job'> | TaskModel.Task<'Job'>> = {
   data: T;
   onClick?: (data: T) => void;
 };
 
+function isTask(
+  data: EntityModel.BusinessEntity<'Job'> | TaskModel.Task<'Job'>,
+): data is TaskModel.Task<'Job'> {
+  return 'taskPayload' in data;
+}
+
 export default function HotJobCard<
   T extends EntityModel.BusinessEntity<'Job'> | TaskModel.Task<'Job'>,
 >({ data, onClick }: { data: T; onClick?: (data: T) => void }) {
+  console.log('data', data);
+
   const standardFields = useMemo(
     () =>
-      'taskPayload' in data
+      isTask(data)
         ? data.taskPayload?.payload?.data.standardFields
         : 'data' in data
           ? data.data.standardFields
@@ -59,7 +64,6 @@ export default function HotJobCard<
       onClick={handleClick}
     >
       <div className="px-7 pt-5 w-full">
-        {' '}
         <div className="font-semibold text-2xl truncate mb-4">{standardFields.name}</div>
         <div className="flex items-center gap-2 mb-4 h-7">
           {standardFields.tags?.map((tag, i) => (

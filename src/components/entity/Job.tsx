@@ -2,13 +2,13 @@ import { useRequest } from '@/hooks/useHooks';
 import { taskService } from '@/services/task';
 import { useAuthStore } from '@/stores/auth';
 import {
-  formatFromNow,
+  formatFileUrl,
   formatLocation,
   formatNumberRange,
   formatSalaryRange,
 } from '@/utils/format';
 import { Icon } from '@iconify/react';
-import { Button, Chip, Link } from '@nextui-org/react';
+import { Chip, Image } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -16,6 +16,7 @@ import { FlowSelector } from '../task/FlowSelector';
 import { get } from 'lodash-es';
 import { generateUrl } from '@/utils/common';
 import LocationDisplay from '@/components/basic/LocationDisplay';
+import { entityService } from '@/services/entity';
 
 export function JobCard<T extends EntityModel.BusinessEntity<'Job'> | ProjectModel.Project<'Job'>>({
   data,
@@ -126,6 +127,27 @@ export function JobDetail({
   taskId?: string;
 }) {
   const { user } = useAuthStore();
+  const router = useRouter();
+
+  // 获取公司详情
+  const { data: companyDetail } = useRequest(
+    () =>
+      entityService.queryDetail({
+        entityType: 'Company',
+        entityId: data.data.standardFields.companyReference?.openId,
+      }),
+    {
+      refreshDeps: [data.data.standardFields.companyReference?.openId],
+      before: () => !!data.data.standardFields.companyReference?.openId,
+    },
+  );
+
+  // 处理点击公司卡片
+  const handleOpenCompany = () => {
+    if (companyDetail?.meta.openId) {
+      router.push(`/home/entity/Company/${companyDetail.meta.openId}`);
+    }
+  };
 
   const { data: task, run } = useRequest(
     () => taskService.queryTaskByPayloadId(projectId!, user?.userId || ''),
@@ -135,27 +157,27 @@ export function JobDetail({
     },
   );
 
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
 
-  async function handleCreateTask() {
-    try {
-      if (!projectId) return;
-      setLoading(true);
-      await taskService.create({
-        projectId,
-        taskPayloadOpenId: user?.userId || '',
-      });
-      toast.success('投递成功');
-      run();
-    } finally {
-      setLoading(false);
-    }
-  }
+  // async function handleCreateTask() {
+  //   try {
+  //     if (!projectId) return;
+  //     setLoading(true);
+  //     await taskService.create({
+  //       projectId,
+  //       taskPayloadOpenId: user?.userId || '',
+  //     });
+  //     toast.success('投递成功');
+  //     run();
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
 
   return (
     <>
       <div className="wrapper py-20">
-        <div className="flex justify-between gap-3 mb-20">
+        <div className="flex justify-between gap-3 ">
           <div>
             <div className="text-5xl text-black font-bold mb-8">
               {data.data.standardFields.name}
@@ -165,7 +187,7 @@ export function JobDetail({
               <LocationDisplay locations={data.data.standardFields.locations} />
             </div>
           </div>
-          {projectId && (
+          {/* {projectId && (
             <div>
               {!task?.stageId ? (
                 <Button
@@ -180,11 +202,11 @@ export function JobDetail({
                 <FlowSelector projectId={projectId} taskId={task.taskId} value={task.stageName} />
               )}
             </div>
-          )}
+          )} */}
         </div>
-        <div className="flex items-center flex-wrap gap-2">
+        <div className="flex items-center flex-wrap gap-2 my-14">
           {data.data.standardFields.tags?.map((tag, index) => (
-            <div className="tag-default" key={index}>
+            <div className="tag-default__lg" key={index}>
               {tag.name}
             </div>
           ))}
@@ -241,6 +263,45 @@ export function JobDetail({
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="wrapper py-20">
+        {companyDetail && (
+          <div className="mb-8">
+            <h2 className="text-4xl font-bold mb-8">更多职位</h2>
+
+            {/* 公司信息卡片 */}
+            <div className="bg-white rounded-lg p-6 mb-8 cursor-pointer shadow-lg hover:shadow-xl transition-shadow ">
+              <div
+                className="flex items-center justify-between cursor-pointer"
+                onClick={handleOpenCompany}
+              >
+                <div className="flex items-center gap-6">
+                  {companyDetail.data.standardFields.logo?.key && (
+                    <Image
+                      src={formatFileUrl(companyDetail.data.standardFields.logo?.key)}
+                      alt={companyDetail.data.standardFields.name}
+                      className="w-20 h-20 flex-shrink-0"
+                      classNames={{ img: 'object-cover' }}
+                    />
+                  )}
+                  <div>
+                    <div className="text-lg font-medium">
+                      {companyDetail.data.standardFields.name}
+                    </div>
+                    <div className="text-sm text-gray-500 mt-1 line-clamp-1">
+                      {companyDetail.data.standardFields.profile}
+                    </div>
+                  </div>
+                </div>
+                <div className="text-primary text-sm flex items-center gap-1">
+                  更多职位
+                  <Icon icon="material-symbols:chevron-right" />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

@@ -1,5 +1,6 @@
 'use client';
 import { JobDetail } from '@/components/entity/Job';
+import { CompanyDetail } from '@/components/entity/Company';
 import { JobOpportunitiesDetail } from '@/components/entity/JobOpportunities';
 import { TrainingDetail } from '@/components/entity/Training';
 import { useRequest } from '@/hooks/useHooks';
@@ -36,14 +37,14 @@ export default function EntityDetail({
           </div>
         </div>
         {entityType === 'Job' && <JobDetail data={data as JobModel.Job} {...searchParams} />}
+        {entityType === 'Company' && (
+          <CompanyDetail data={data as EntityModel.BusinessEntity<'Company'>} {...searchParams} />
+        )}
         {entityType === 'JobOpportunities' && (
           <JobOpportunitiesDetail
             data={data as JobOpportunitiesModel.JobOpportunities}
             {...searchParams}
           />
-        )}
-        {entityType === 'Training' && (
-          <TrainingDetail data={data as EntityModel.BusinessEntity<'Training'>} {...searchParams} />
         )}
       </section>
     )

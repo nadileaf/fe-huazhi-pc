@@ -63,6 +63,8 @@ export type QueryTasksParams = Partial<
     limit: number;
     view: View;
     checkPermission?: boolean;
+    /** 是否压缩结构 */
+    compact?: boolean;
   }>
 >;
 

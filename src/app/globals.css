@@ -105,6 +105,10 @@
   @apply border border-[#E0E0E0] bg-white text-black-666 text-sm py-1 px-2 rounded w-max;
 }
 
+.tag-default__lg {
+  @apply border border-[#E0E0E0] bg-white text-black-666 rounded w-max text-xl px-4 py-2;
+}
+
 body {
   @apply min-h-screen text-sm;
   font-family:

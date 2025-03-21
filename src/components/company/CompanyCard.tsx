@@ -16,12 +16,12 @@ export default function CompanyCard({ data, onClick }: CompanyCardProps) {
 
   function handleClick() {
     if (onClick) onClick(data);
-    else router.push(`/entity/Company/${data.meta.openId}`);
+    else router.push(`/home/entity/Company/${data.meta.openId}`);
   }
 
   return standardFields ? (
     <div
-      className="bg-white rounded-lg py-8 px-10 cursor-pointer hover:shadow-lg transition-shadow"
+      className="bg-white rounded-lg py-8 px-10 cursor-pointer shadow-md hover:shadow-lg transition-shadow"
       onClick={handleClick}
     >
       <div className="flex items-center gap-4">
