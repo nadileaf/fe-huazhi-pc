@@ -28,7 +28,8 @@ export default function CompanyCard({ data, onClick }: CompanyCardProps) {
         <Image
           src={formatFileUrl(standardFields.logo?.key)}
           alt={standardFields.name}
-          className="w-20 h-20 flex-shrink-0"
+          className="w-24 h-24 flex-shrink-0"
+          classNames={{ img: 'object-cover' }}
         />
         <div className="border-r-1 border-[#ccc] w-[1px] h-[120px] mx-5"></div>
         <div className="flex-1 min-h-[80px]">

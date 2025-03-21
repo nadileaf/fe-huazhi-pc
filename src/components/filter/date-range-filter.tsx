@@ -38,7 +38,6 @@ export default function DateRangeFilter({ config, values, onChange }: Props) {
 
   return (
     <div className="flex items-center gap-4">
-      <div className="mr-3">{config.label}：</div>
       <DatePicker
         value={start ? normalizeDate(start) : undefined}
         onChange={(date) => onStartChange(date)}

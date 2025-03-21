@@ -1,52 +1,63 @@
-import { Select, SelectItem } from '@nextui-org/react';
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from '@nextui-org/react';
 import { type FilterOptionConfig } from '@/config/entity';
-import { useEffect, useState } from 'react';
 import { useFilterOption } from '@/hooks/useFilterOption';
+import { ChevronDownIcon } from 'lucide-react';
 
 interface Props {
   config: FilterOptionConfig[number];
   values: SearchModel.FilterValueType[];
-  onChange: (values: Props['values']) => void;
+  onChange: (values: SearchModel.FilterValueType[]) => void;
 }
 
 export default function SelectFilter({ config, values, onChange }: Props) {
   const { getOptionLabel, getValue } = useFilterOption();
-  const isMultiple = config.multiple ?? true;
 
+  // 转换选项数据
   const items =
     config.values?.map((item) => ({
       label: getOptionLabel(item, config),
       value: getValue(item),
     })) || [];
 
+  // 当前选中的选项集合
   const selectedKeys = new Set(
-    items.filter((item) => values.includes(item.value)).map((item) => item.label),
+    items
+      .filter((item) => values?.includes(item.value) && item.label)
+      .map((item) => item.label) as string[],
   );
 
-  function onSelectedValuesChange(keys: any) {
-    const values = [...keys]
-      .map((k) => items.find((item) => item.label === k)?.value)
-      .filter((v) => !!v) as Props['values'];
-    onChange(values);
+  // 处理选项变更
+  function handleSelectionChange(keys: Set<string>) {
+    const newValues = Array.from(keys)
+      .map((key) => items.find((item) => item.label === key)?.value)
+      .filter((value): value is SearchModel.FilterValueType => value !== undefined);
+
+    onChange(newValues);
   }
 
-  if (!config.values) return null;
-
   return (
-    <div>
-      <Select
-        size="sm"
-        label={config.label}
-        selectionMode={isMultiple ? 'multiple' : 'single'}
-        className="max-w-xs"
-        selectedKeys={selectedKeys as any}
-        onSelectionChange={(keys) => onSelectedValuesChange(keys)}
-        classNames={{ base: 'w-48' }}
+    <Dropdown>
+      <DropdownTrigger>
+        <Button
+          variant="bordered"
+          color={selectedKeys.size > 0 ? 'primary' : 'default'}
+          endContent={<ChevronDownIcon size={16} />}
+        >
+          {config.label}
+        </Button>
+      </DropdownTrigger>
+      <DropdownMenu
+        aria-label={`Filter by ${config.label}`}
+        closeOnSelect={false}
+        selectedKeys={selectedKeys}
+        selectionMode={config.multiple ? 'multiple' : 'single'}
+        onSelectionChange={(keys) => handleSelectionChange(keys as Set<string>)}
+        className="max-h-[400px] overflow-y-auto"
       >
-        {items.map((option) => (
-          <SelectItem key={option.label || ''}>{option.label}</SelectItem>
+        {items.map((item) => (
+          <DropdownItem key={item.label}>{item.label}</DropdownItem>
         ))}
-      </Select>
-    </div>
+      </DropdownMenu>
+    </Dropdown>
   );
 }

@@ -36,6 +36,7 @@ declare namespace EntityModel {
     PackagePlan: PackagePlanModel.PackagePlan;
     JobOpportunities: JobOpportunitiesModel.JobOpportunities;
     Training: TrainingModel.Training;
+    Company: CompanyModel.Company;
   };
 
   /** @description 素材库实体信息,继承自SchemaEntity */

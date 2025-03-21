@@ -1,4 +1,5 @@
-import { filterOptionConfig as filterOptionConfig_JobOpportunities } from './JobOpportunities';
+import { filterOptionConfig as filterOptionConfig_Job } from './Job';
+import { filterOptionConfig as filterOptionConfig_Company } from './Company';
 import { type FilterOptionConfig, FilterOptionConfigValues } from './type';
 
 export const entitiesWithoutFilters: EntityModel.EntityType[] = ['Project'];
@@ -6,6 +7,9 @@ export const entitiesWithoutFilters: EntityModel.EntityType[] = ['Project'];
 export const entityConfigMap = new Map<
   EntityModel.EntityType,
   { filterOptionConfig: FilterOptionConfig }
->([['JobOpportunities', { filterOptionConfig: filterOptionConfig_JobOpportunities }]]);
+>([
+  ['Job', { filterOptionConfig: filterOptionConfig_Job }],
+  ['Company', { filterOptionConfig: filterOptionConfig_Company }],
+]);
 
 export * from './type';
