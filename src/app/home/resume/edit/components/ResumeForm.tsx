@@ -2,7 +2,6 @@
 
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'next/navigation';
-import { useSystemEmployee } from '@/hooks/useSystemEmployee';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import { Button } from '@nextui-org/react';
@@ -16,11 +15,16 @@ import { Works } from './sections/Works';
 import { Trainings } from './sections/Trainings';
 import { Certificates } from './sections/Certificates';
 import { Educations } from './sections/Educations';
-import { type FormInput } from './types';
+import { JobExpectation } from './sections/JobExpectation';
+import { Projects } from './sections/Projects';
+
+interface FormInput {
+  standardFields: ResumeModel.StandardFields;
+}
 
 export default function ResumeForm() {
-  const { systemEmployee, setSystemEmployee } = useAuthStore();
-  const { standardFields } = useSystemEmployee(systemEmployee);
+  const [resume, setResume] = useAuthStore((state) => [state.resume, state.setResume]);
+  const standardFields = resume?.data.standardFields;
 
   const [loadingData, setLoadingData] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -45,22 +49,21 @@ export default function ResumeForm() {
 
   const onSubmit: SubmitHandler<FormInput> = async (data) => {
     setLoading(true);
+    console.log('data', data);
     try {
-      console.log('form data:', data);
-      await entityService.patchEntity('SystemEmployee', {
-        openId: systemEmployee?.meta.openId,
+      await entityService.patchEntity('Resume', {
+        openId: resume?.meta.openId,
         data: {
           standardFields: data.standardFields,
         },
       });
-      setSystemEmployee();
+      setResume();
       toast.success('保存成功');
     } catch (error) {
       console.error('保存失败:', error);
       toast.error('保存失败');
     } finally {
       setLoading(false);
-      router.back();
     }
   };
 
@@ -82,13 +85,13 @@ export default function ResumeForm() {
           <div className="py-14">
             <div className="mb-14 flex justify-between gap-24">
               <BasicInfo control={control} className="flex-1" />
-              <AcademicInfo control={control} className="flex-1" />
+              <JobExpectation control={control} className="flex-1" />
             </div>
             <div className="space-y-12">
               <Educations control={control} />
-              <Certificates control={control} />
-              <Trainings control={control} />
               <Works control={control} />
+              <Projects control={control} />
+              <Certificates control={control} />
             </div>
           </div>
         </div>

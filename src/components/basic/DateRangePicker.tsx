@@ -35,7 +35,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
   }, [value]);
 
   const formattedRange = useMemo(() => {
-    console.log('formattedRange', value);
+    // console.log('formattedRange', value);
     if (!value?.start?.iso && !value?.end?.iso) {
       return placeholder;
     }

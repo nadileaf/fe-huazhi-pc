@@ -29,7 +29,25 @@ export function BasicInfo({ control, className }: InfoProps) {
       <Controller
         name="standardFields.humanInfo.name"
         control={control}
-        render={({ field }) => <Input {...field} {...commonProps} label="姓名" />}
+        render={({ field }) => (
+          <Input {...field} {...commonProps} label="姓名" placeholder="请输入姓名" />
+        )}
+      />
+
+      <Controller
+        name="standardFields.contactInfo.mobilePhoneNumber"
+        control={control}
+        render={({ field }) => (
+          <Input {...field} {...commonProps} label="手机号" placeholder="请输入手机号" />
+        )}
+      />
+
+      <Controller
+        name="standardFields.contactInfo.emails.0"
+        control={control}
+        render={({ field }) => (
+          <Input {...field} {...commonProps} label="邮箱" placeholder="请输入邮箱" />
+        )}
       />
 
       <div className="flex items-center gap-5">
@@ -41,6 +59,7 @@ export function BasicInfo({ control, className }: InfoProps) {
               {...field}
               {...commonProps}
               label="性别"
+              placeholder="请选择性别"
               selectedKeys={field.value ? [field.value] : []}
             >
               <SelectItem key="男">男</SelectItem>
@@ -65,12 +84,6 @@ export function BasicInfo({ control, className }: InfoProps) {
             />
           )}
         />
-
-        <Controller
-          name="standardFields.employeeInfo.id"
-          control={control}
-          render={({ field }) => <Input {...field} {...commonProps} label="学号" />}
-        />
       </div>
 
       <Controller
@@ -78,7 +91,7 @@ export function BasicInfo({ control, className }: InfoProps) {
         control={control}
         render={({ field }) => (
           <>
-            <div className="mb-1">现居地</div>
+            <div className="mb-1">当前位置</div>
             <LocationSelector
               value={field.value}
               onChange={(val) => {

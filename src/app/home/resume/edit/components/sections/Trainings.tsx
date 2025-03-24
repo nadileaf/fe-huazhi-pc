@@ -15,7 +15,7 @@ export function Trainings({ control, className }: InfoProps) {
       defaultValue={{
         name: '',
         description: '',
-        dateRange: { start: null, end: null },
+        dateRange: undefined,
       }}
     >
       {(index) => (
@@ -32,7 +32,7 @@ export function Trainings({ control, className }: InfoProps) {
             <Controller
               name={`standardFields.trainings.${index}.dateRange`}
               control={control}
-              defaultValue={{ start: null, end: null }}
+              defaultValue={undefined}
               render={({ field }) => (
                 <div className="w-[33%]">
                   <DateRangePicker2

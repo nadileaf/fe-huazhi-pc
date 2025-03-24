@@ -1,6 +1,5 @@
 'use client';
-import { useMessageBoxContext } from '@/providers/MessageBoxProvider';
-import { useAppStore } from '@/stores/app';
+
 import { useAuthStore } from '@/stores/auth';
 import { withCdnPrefix } from '@/utils/file';
 import { formatImageUrl } from '@/utils/format';
@@ -20,34 +19,18 @@ import {
   Avatar,
   Input,
 } from '@nextui-org/react';
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import { useFilePreview } from '@/components/basic/FilePreview';
 import { useCitySelector } from './basic/CitySelector';
-import { useDebouncedEffect, useMobile } from '@/hooks/useHooks';
-import useApplyModal from './unlogin/ApplyModalContent';
-import { truthy } from '@/utils/types';
+import { useMobile } from '@/hooks/useHooks';
 
 type Route = { title: string; href?: string; target?: '_blank'; onClick?: () => void };
 
 export default function Header() {
   const router = useRouter();
-  const { user, resume, login, logout } = useAuthStore();
+  const { user, resume, authRoutes, login, logout } = useAuthStore();
   const pathname = usePathname();
   const { isMobile } = useMobile();
-
-  const { openModal } = useMessageBoxContext();
-  const { openApplyModal } = useApplyModal();
-
-  const routes = useMemo<Route[]>(() => {
-    const res = [{ title: '首页', href: '/' }];
-
-    if (user) {
-      res.push({ title: '简历', href: '/resume' });
-    }
-
-    return res;
-  }, [user]);
 
   const { previewFile } = useFilePreview();
   function handlePrivacy() {
@@ -59,10 +42,11 @@ export default function Header() {
   const { openCitySelector } = useCitySelector();
 
   const isActiveRoute = (route: Route) => {
+    // TODO
     if (['/home/resume'].includes(pathname)) return route.href === '/home';
 
     if (['/privacy-policy', '/user-agreement'].includes(pathname))
-      return route.href === routes[0].href;
+      return route.href === authRoutes[0].href;
 
     return pathname === route.href;
   };
@@ -118,7 +102,7 @@ export default function Header() {
         ) : null} */}
         </NavbarBrand>
         <NavbarContent className="max-sm:hidden">
-          {routes.map((route, index) => (
+          {authRoutes.map((route, index) => (
             <NavbarItem key={index} isActive={isActiveRoute(route)}>
               {route.href ? (
                 <Link href={route.href} target={route.target} className="text-[#000]">
@@ -194,36 +178,5 @@ export default function Header() {
         </NavbarItem>
       </NavbarContent>
     </Navbar>
-  );
-}
-
-function SearchInput() {
-  const [value, setValue] = useState('');
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
-  function handleSearch() {
-    console.log('handleSearch', value);
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('query', value);
-    router.push(`/home/search?${params.toString()}`);
-  }
-
-  return (
-    <Input
-      value={value}
-      isClearable
-      placeholder="搜索职位并按下回车"
-      variant="bordered"
-      radius="full"
-      startContent={
-        <Icon icon="akar-icons:search" className="flex-shrink-0 mx-1 text-base text-default-500 " />
-      }
-      classNames={{
-        inputWrapper: 'group-data-[focus=true]:border-gray-400',
-      }}
-      onValueChange={setValue}
-      onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-    />
   );
 }

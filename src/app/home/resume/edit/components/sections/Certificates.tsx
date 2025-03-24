@@ -16,7 +16,7 @@ export function Certificates({ control, className }: InfoProps) {
       defaultValue={{
         name: '',
         source: '',
-        date: null,
+        date: undefined,
         attachments: [],
       }}
     >
@@ -40,7 +40,7 @@ export function Certificates({ control, className }: InfoProps) {
             <Controller
               name={`standardFields.certificates.${index}.date`}
               control={control}
-              defaultValue={{ iso: '' }}
+              defaultValue={undefined}
               render={({ field }) => (
                 <DatePicker
                   value={field.value}

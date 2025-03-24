@@ -5,33 +5,41 @@ import { type InfoProps } from '../types';
 import DateRangePicker from '@/components/basic/DateRangePicker';
 import { commonProps } from './common';
 
-export function Works({ control, className }: InfoProps) {
+export function Projects({ control, className }: InfoProps) {
   return (
     <ArrayField
-      name="standardFields.works"
+      name="standardFields.projects"
       control={control}
-      title="工作经历"
+      title="项目经历"
       className={className}
       defaultValue={{
+        name: '',
         companyName: '',
-        jobNames: [],
         description: '',
-        dateRange: { start: null, end: null },
+        dateRange: undefined,
       }}
     >
       {(index) => (
         <>
+          <Controller
+            name={`standardFields.projects.${index}.name`}
+            control={control}
+            render={({ field }) => (
+              <Input {...field} {...commonProps} label="项目名称" placeholder="请输入项目名称" />
+            )}
+          />
+
+          <Controller
+            name={`standardFields.projects.${index}.companyName`}
+            control={control}
+            render={({ field }) => (
+              <Input {...field} {...commonProps} label="所属公司" placeholder="请输入所属公司" />
+            )}
+          />
+
           <div className="flex items-center gap-5">
             <Controller
-              name={`standardFields.works.${index}.companyName`}
-              control={control}
-              render={({ field }) => (
-                <Input {...field} {...commonProps} label="公司名称" className="w-[66%]" />
-              )}
-            />
-
-            <Controller
-              name={`standardFields.works.${index}.dateRange`}
+              name={`standardFields.projects.${index}.dateRange`}
               control={control}
               defaultValue={undefined}
               render={({ field }) => (
@@ -39,7 +47,7 @@ export function Works({ control, className }: InfoProps) {
                   <DateRangePicker
                     value={{ start: field.value?.start, end: field.value?.end }}
                     onChange={(range) => field.onChange(range)}
-                    label="工作时间"
+                    label="项目时间"
                   />
                 </div>
               )}
@@ -47,30 +55,14 @@ export function Works({ control, className }: InfoProps) {
           </div>
 
           <Controller
-            name={`standardFields.works.${index}.jobNames`}
-            control={control}
-            defaultValue={[]}
-            render={({ field }) => (
-              <Input
-                {...commonProps}
-                label="职位名称"
-                className="w-full"
-                value={field.value?.[0] || ''}
-                onChange={(e) => {
-                  field.onChange([e.target.value]);
-                }}
-              />
-            )}
-          />
-
-          <Controller
-            name={`standardFields.works.${index}.description`}
+            name={`standardFields.projects.${index}.description`}
             control={control}
             render={({ field }) => (
               <Textarea
                 {...field}
                 {...commonProps}
-                label="工作内容描述"
+                label="项目描述"
+                placeholder="请输入项目描述"
                 className="w-full"
                 minRows={3}
                 maxRows={6}

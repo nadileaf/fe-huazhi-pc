@@ -15,7 +15,7 @@ export function Educations({ control, className }: InfoProps) {
       className={className}
       defaultValue={{
         schoolName: '',
-        dateRange: { start: null, end: null },
+        dateRange: undefined,
         degree: {},
         department: '',
         major: '',
@@ -35,7 +35,7 @@ export function Educations({ control, className }: InfoProps) {
             <Controller
               name={`standardFields.educations.${index}.dateRange`}
               control={control}
-              defaultValue={{ start: null, end: null }}
+              defaultValue={undefined}
               render={({ field }) => (
                 <div className="flex-1">
                   <DateRangePicker
@@ -64,12 +64,6 @@ export function Educations({ control, className }: InfoProps) {
                   ))}
                 </Select>
               )}
-            />
-
-            <Controller
-              name={`standardFields.educations.${index}.department`}
-              control={control}
-              render={({ field }) => <Input {...field} {...commonProps} label="院系" />}
             />
 
             <Controller
