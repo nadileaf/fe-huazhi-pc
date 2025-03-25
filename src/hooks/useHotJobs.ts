@@ -44,13 +44,8 @@ export default function useHotJobs() {
     }
   }, [tabs, currentTab]);
 
-  const filters = useMemo(() => {
-    if (!currentTab) return [];
-    return [{ key: 'data.standardFields.categories', values: [currentTab] }];
-  }, [currentTab]);
-
   const { data, loading } = useRequest(() => query(), {
-    refreshDeps: [currentPage, currentSort, filters],
+    refreshDeps: [currentPage, currentSort, currentTab],
   });
 
   const getEntityJobs = (
@@ -58,7 +53,7 @@ export default function useHotJobs() {
   ) => {
     return entityService.query({
       entityType: 'Job',
-      filters,
+      query: currentTab,
       sort: currentSort.value,
       ...pageOptions,
     });
