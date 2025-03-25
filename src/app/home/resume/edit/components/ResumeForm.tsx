@@ -28,6 +28,7 @@ export default function ResumeForm() {
 
   const [loadingData, setLoadingData] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
 
   useEffect(() => {
     if (standardFields) {
@@ -35,7 +36,7 @@ export default function ResumeForm() {
     }
   }, [standardFields]);
 
-  const { control, handleSubmit, reset } = useForm<FormInput>();
+  const { control, handleSubmit, reset, formState } = useForm<FormInput>();
 
   const router = useRouter();
 
@@ -47,9 +48,27 @@ export default function ResumeForm() {
     }
   }, [standardFields, reset]);
 
+  // 监听表单变化
+  useEffect(() => {
+    console.log('formState.isDirty', formState.isDirty);
+    setIsDirty(formState.isDirty);
+  }, [formState.isDirty]);
+
+  // 监听页面离开
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isDirty]);
+
   const onSubmit: SubmitHandler<FormInput> = async (data) => {
     setLoading(true);
-    console.log('data', data);
     try {
       await entityService.patchEntity('Resume', {
         openId: resume?.meta.openId,
@@ -58,6 +77,7 @@ export default function ResumeForm() {
         },
       });
       setResume();
+      setIsDirty(false);
       toast.success('保存成功');
     } catch (error) {
       console.error('保存失败:', error);
@@ -72,11 +92,8 @@ export default function ResumeForm() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="sticky top-[var(--navbar-height)] z-40 bg-white shadow-sm">
           <div className="py-4">
-            <div className="wrapper flex items-center justify-between">
+            <div className="wrapper">
               <h1 className="title text-[40px]">编辑简历</h1>
-              <Button type="submit" color="primary" isLoading={loading}>
-                保存
-              </Button>
             </div>
           </div>
         </div>
@@ -95,6 +112,24 @@ export default function ResumeForm() {
             </div>
           </div>
         </div>
+
+        {/* 浮动保存按钮 */}
+        {isDirty && (
+          <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-50 bg-white rounded-full shadow-lg px-4 py-3 hover:shadow-xl transition-all">
+            <div className="flex items-center gap-2 px-2">
+              <div className="text-sm text-gray-500">有未保存的更改</div>
+              <Button
+                type="submit"
+                color="primary"
+                size="sm"
+                isLoading={loading}
+                className="min-w-[100px]"
+              >
+                保存更改
+              </Button>
+            </div>
+          </div>
+        )}
       </form>
     </Loading>
   );
