@@ -113,6 +113,27 @@ export type DeleteEntityEvaluationParams = EntityQueryDetailParams & {
   payloadEntityId?: string;
 };
 
+export type EntityUploadParams<
+  T extends EntityModel.BusinessEntityType = EntityModel.BusinessEntityType,
+> = {
+  /** entityId不传则后端自动生成 */
+  entityId?: string;
+  entityType: T;
+  file: File;
+  roles?: string[];
+};
+
+export type EntityUploadOptions = {
+  // onBeforeUpload?: (params: { source: ReturnType<typeof axios.CancelToken.source> }) => void;
+  onUploadProgress?: (progressEvent: ProgressEvent) => void;
+};
+
+export type EntityUploadResponse = {
+  data: any;
+  code: string | number;
+  existingData?: any;
+};
+
 export const entityService = {
   async query<T extends EntityModel.BusinessEntityType = EntityModel.BusinessEntityType>(
     params: EntityQueryParams<T>,
@@ -132,8 +153,8 @@ export const entityService = {
       const filters: SearchModel.FilterValue[] = [
         ...parseFilters([...requestFilters, ...innerFilters], 'search'),
         {
-          key: 'meta.status',
-          values: [EntityStatus.Normal],
+          key: '!meta.status',
+          values: ['1'],
         },
       ];
       // if (!query && !otherParams.sort) otherParams.sort = 'meta.updatedAt:desc';
@@ -379,6 +400,33 @@ export const entityService = {
     return request.delete(
       mesoorSpacePrefixUrl(`/v1/entities/${entityType}/${entityId}/evaluation/${evaluationId}`),
     );
+  },
+
+  /** 上传实体相关文件 */
+  async upload<T extends EntityModel.BusinessEntityType = EntityModel.BusinessEntityType>(
+    { entityId, entityType, file, roles }: EntityUploadParams<T>,
+    options?: EntityUploadOptions,
+  ) {
+    const apiUrl = generateUrl(mesoorSpacePrefixUrl(`/v3/entities/${entityType}/upload`), {
+      openId: entityId,
+      roles,
+    });
+
+    const formData = new FormData();
+    const _file = new File([file], encodeURIComponent(file.name), { type: file.type });
+    formData.append('file', _file);
+
+    // 透传用于取消上传的 source
+    // const source = axios.CancelToken.source();
+    // options?.onBeforeUpload?.({ source });
+
+    try {
+      await request.upload(apiUrl, file, {
+        handleResponseData: false,
+      });
+    } catch (error) {
+      return Promise.reject(error);
+    }
   },
 };
 

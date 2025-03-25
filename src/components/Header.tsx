@@ -42,7 +42,6 @@ export default function Header() {
   const { openCitySelector } = useCitySelector();
 
   const isActiveRoute = (route: Route) => {
-    // TODO
     if (['/home/resume'].includes(pathname)) return route.href === '/home';
 
     if (['/privacy-policy', '/user-agreement'].includes(pathname))
@@ -125,7 +124,7 @@ export default function Header() {
           </NavbarItem>
         )} */}
         <NavbarItem>
-          {user && resume ? (
+          {user ? (
             <div className="flex items-center gap-3">
               <Dropdown>
                 <DropdownTrigger>
