@@ -30,7 +30,7 @@ export default function SchoolJobs() {
   const { sorts, data, loading, currentSort, handleSelectSort, handleClick } = useSchoolJobs();
 
   function handleClickMore() {
-    router.push('/home/school-jobs');
+    router.push('/school-jobs');
   }
 
   return (

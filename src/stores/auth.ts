@@ -129,7 +129,7 @@ export const useAuthStore = create<State & Actions>((set, get) => ({
     const res = [...defaultRoutes];
     console.log('setAuthRoutes', get().user);
     if (get().user) {
-      res.push({ title: '简历', href: '/home/resume/edit' });
+      res.push({ title: '简历', href: '/resume/edit' });
     }
     set({ authRoutes: res });
   },

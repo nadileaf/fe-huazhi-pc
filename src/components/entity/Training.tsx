@@ -45,7 +45,7 @@ export function TrainingCard({
     if (onClick) onClick(data);
     else
       router.push(
-        generateUrl(`/home/entity/Training/${data.meta.openId}`, {
+        generateUrl(`/entity/Training/${data.meta.openId}`, {
           stageName,
           projectId,
           taskId,

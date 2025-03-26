@@ -17,7 +17,7 @@ export default function HomeJobs() {
     useHotJobs();
 
   function handleClickMore() {
-    router.push('/home/hot-jobs');
+    router.push('/hot-jobs');
   }
 
   return (

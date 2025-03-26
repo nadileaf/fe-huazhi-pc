@@ -92,7 +92,7 @@ export default function useHotJobs() {
   function handleClick(data: any) {
     const entityId = get(data, 'meta.openId');
     const projectId = get(data, 'data.managedFields.entityRelated.projects[0].projectId');
-    router.push(generateUrl(`/home/entity/Job/${entityId}`, { projectId }));
+    router.push(generateUrl(`/entity/Job/${entityId}`, { projectId }));
   }
 
   return {

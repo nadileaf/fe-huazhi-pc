@@ -7,9 +7,6 @@ import { useAuthStore } from '@/stores/auth';
 import { usePathname } from 'next/navigation';
 import { Suspense, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { aiService } from '@/services/ai';
-import { useAIToolsStore } from '@/stores/ai-tools';
-import { useAppStore } from '@/stores/app';
 
 const commonPages = ['/privacy-policy', '/user-agreement'];
 
@@ -57,28 +54,6 @@ export default function AuthProvider({
     },
     [_token, inviterId],
     10,
-  );
-
-  const { setAITools } = useAIToolsStore();
-
-  useRequest(() => aiService.query(), {
-    before: () => !!token,
-    refreshDeps: [token],
-    onSuccess: (data) => {
-      setAITools(data);
-    },
-  });
-
-  const { initLocation } = useAppStore();
-
-  useDebouncedEffect(
-    () => {
-      if (user) {
-        initLocation();
-      }
-    },
-    [user],
-    500,
   );
 
   return (

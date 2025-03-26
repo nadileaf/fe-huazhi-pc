@@ -55,7 +55,7 @@ export default function SchoolJobCard<
   const router = useRouter();
   function handleClick() {
     if (onClick) onClick(data);
-    else router.push(generateUrl(`/home/entity/Job/${entityId}`, { projectId, taskId }));
+    else router.push(generateUrl(`/entity/Job/${entityId}`, { projectId, taskId }));
   }
 
   return standardFields ? (

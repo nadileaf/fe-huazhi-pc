@@ -16,7 +16,7 @@ export default function CompanyCard({ data, onClick }: CompanyCardProps) {
 
   function handleClick() {
     if (onClick) onClick(data);
-    else router.push(`/home/entity/Company/${data.meta.openId}`);
+    else router.push(`/entity/Company/${data.meta.openId}`);
   }
 
   return standardFields ? (

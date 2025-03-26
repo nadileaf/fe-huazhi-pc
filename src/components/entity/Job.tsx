@@ -145,7 +145,7 @@ export function JobDetail({
   // 处理点击公司卡片
   const handleOpenCompany = () => {
     if (companyDetail?.meta.openId) {
-      router.push(`/home/entity/Company/${companyDetail.meta.openId}`);
+      router.push(`/entity/Company/${companyDetail.meta.openId}`);
     }
   };
 

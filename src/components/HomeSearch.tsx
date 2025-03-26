@@ -13,7 +13,7 @@ export default function HomeSearch() {
     const params = new URLSearchParams();
     params.set('query', inputValue);
     params.set('tab', 'Job');
-    router.push(`/home/search?${params.toString()}`);
+    router.push(`/search?${params.toString()}`);
   }
 
   return (

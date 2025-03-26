@@ -55,7 +55,7 @@ export default function HotJobCard<
   function handleClick() {
     console.log('handleClick', onClick);
     if (onClick) onClick(data);
-    else router.push(`/home/entity/Job/${id}`);
+    else router.push(`/entity/Job/${id}`);
   }
 
   return standardFields ? (

@@ -39,14 +39,7 @@ export default function Header() {
     ]);
   }
 
-  const { openCitySelector } = useCitySelector();
-
   const isActiveRoute = (route: Route) => {
-    if (['/home/resume'].includes(pathname)) return route.href === '/home';
-
-    if (['/privacy-policy', '/user-agreement'].includes(pathname))
-      return route.href === authRoutes[0].href;
-
     return pathname === route.href;
   };
 
