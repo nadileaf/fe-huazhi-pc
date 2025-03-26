@@ -141,6 +141,7 @@ export default function Header() {
                 </DropdownTrigger>
                 <DropdownMenu>
                   <DropdownItem
+                    key="logout"
                     className="text-danger"
                     color="danger"
                     startContent={<Icon icon="ri:logout-box-r-line" />}

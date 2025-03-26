@@ -11,6 +11,13 @@ interface LocationSelectorProps {
   onChange?: (value: Common.NormalizedField.Location) => void;
 }
 
+const SelectClasses = {
+  className: 'max-w-xs',
+  classNames: {
+    listboxWrapper: 'max-h-[300px] overflow-y-auto',
+  },
+};
+
 export default function LocationSelector({ value = {}, onChange }: LocationSelectorProps) {
   const [innerValue, setInnerValue] = useState<Common.NormalizedField.Location>(value);
   const [address, setAddress] = useState(value?.address || '');
@@ -93,7 +100,7 @@ export default function LocationSelector({ value = {}, onChange }: LocationSelec
         placeholder="中国"
         selectedKeys={innerValue.country ? [innerValue.country] : []}
         onChange={(e) => handleLocationChange('country', e.target.value)}
-        className="w-[120px]"
+        {...SelectClasses}
       >
         {countries.map((country) => (
           <SelectItem key={country.name} value={country.name}>
@@ -110,7 +117,7 @@ export default function LocationSelector({ value = {}, onChange }: LocationSelec
             placeholder="选择省份"
             selectedKeys={innerValue.province ? [innerValue.province] : []}
             onChange={(e) => handleLocationChange('province', e.target.value)}
-            className="w-[120px]"
+            {...SelectClasses}
           >
             {cityTree.map((province) => (
               <SelectItem key={province.ext_name} value={province.ext_name}>
@@ -125,7 +132,7 @@ export default function LocationSelector({ value = {}, onChange }: LocationSelec
             placeholder="选择城市"
             selectedKeys={innerValue.city ? [innerValue.city] : []}
             onChange={(e) => handleLocationChange('city', e.target.value)}
-            className="w-[140px]"
+            {...SelectClasses}
             isDisabled={!innerValue.province}
           >
             {cities.map((city) => (
@@ -141,7 +148,7 @@ export default function LocationSelector({ value = {}, onChange }: LocationSelec
             placeholder="选择区县"
             selectedKeys={innerValue.district ? [innerValue.district] : []}
             onChange={(e) => handleLocationChange('district', e.target.value)}
-            className="w-[140px]"
+            {...SelectClasses}
             isDisabled={!innerValue.city}
           >
             {districts.map((district) => (
