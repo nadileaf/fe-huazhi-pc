@@ -10,8 +10,6 @@ const defaultBanner: Banner[] = [
   { url: 'https://cdn-fe.mesoor.com/custom/ciickd/banner-3.png', name: '默认3', seats: '1' },
 ];
 
-const projectId = '2f52ee26-cd2a-44f1-8beb-2fc7395cec00';
-
 export const bannerService = {
   async query() {
     try {
@@ -20,12 +18,12 @@ export const bannerService = {
         undefined,
         {
           handleResponseData: false,
-          isMainTenant: true,
         },
       );
-      const res = transformBanners(result.data.filter((item) => item.project.openId === projectId));
+      const res = transformBanners(result.data);
       return res.length ? res : defaultBanner;
     } catch (error) {
+      console.error(error);
       return defaultBanner;
     }
   },
