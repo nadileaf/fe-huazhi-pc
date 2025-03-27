@@ -1,0 +1,116 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Before diving into the best practices, please note that you may need to adapt the globs depending on your project's specific file structure and requirements.
+
+---
+name: nextjs-best-practices.mdc
+description: Best practices for Next.js applications and routing
+globs: **/*.{ts,tsx}
+---
+
+- Use the App Router for better performance and improved data fetching.
+- Implement proper error boundaries to handle runtime errors gracefully.
+- Utilize Next.js built-in optimizations like image optimization and code splitting.
+- Use `getStaticProps` and `getServerSideProps` appropriately for data fetching.
+
+---
+name: react-best-practices.mdc
+description: Best practices for React component development
+globs: **/*.{tsx,jsx}
+---
+
+- Use functional components with hooks instead of class components.
+- Implement proper state management using `useState` or external libraries like Zustand.
+- Utilize memoization with `useMemo` and `useCallback` for performance optimization.
+- Follow the single responsibility principle for components.
+
+---
+name: typescript-best-practices.mdc
+description: TypeScript coding standards and type safety guidelines
+globs: **/*.{ts,tsx}
+---
+
+- Enable strict mode in your `tsconfig.json` for better type checking.
+- Use interfaces for object shapes and types for unions or intersections.
+- Implement type guards to narrow types in conditional blocks.
+- Use generics for reusable components and functions.
+
+---
+name: tailwindcss-best-practices.mdc
+description: Best practices for using Tailwind CSS in your project
+globs: **/*.{tsx,jsx,css}
+---
+
+- Use utility classes directly in your JSX for faster development.
+- Create custom components for frequently used class combinations.
+- Utilize the `@apply` directive in CSS files for reusable styles.
+- Keep your `tailwind.config.js` organized and use plugins judiciously.
+
+---
+name: zustand-best-practices.mdc
+description: Best practices for state management with Zustand
+globs: **/*.{ts,tsx}
+---
+
+- Create separate stores for different domains of your application.
+- Use the `shallow` comparison function to optimize re-renders.
+- Implement middleware like `persist` for local storage integration.
+- Keep store logic simple and use selectors for derived state.
+
+---
+name: react-hook-form-best-practices.mdc
+description: Best practices for form handling with React Hook Form
+globs: **/*.{tsx,jsx}
+---
+
+- Use the `useForm` hook with appropriate options like `mode: 'onBlur'` for validation.
+- Implement custom validation rules using the `register` function.
+- Utilize the `Controller` component for controlled inputs like `select` or custom components.
+- Handle form submission with `handleSubmit` and process data in the callback.
+
+---
+name: axios-best-practices.mdc
+description: Best practices for making HTTP requests with Axios
+globs: **/*.{ts,tsx}
+---
+
+- Create an Axios instance with a base URL and default headers for consistency.
+- Use interceptors to handle authentication and error logging globally.
+- Implement proper error handling and retries for network requests.
+- Use cancel tokens to cancel ongoing requests when necessary.
+
+---
+name: framer-motion-best-practices.mdc
+description: Best practices for animations with Framer Motion
+globs: **/*.{tsx,jsx}
+---
+
+- Use the `animate` prop for simple animations and `useAnimation` for more complex ones.
+- Implement variants for reusable animation states.
+- Optimize performance by using `initial={false}` for animations that don't need to start immediately.
+- Utilize `layout` prop for smooth transitions when elements change position or size.
+
+---
+name: react-toastify-best-practices.mdc
+description: Best practices for displaying notifications with React Toastify
+globs: **/*.{tsx,jsx}
+---
+
+- Use the `toast` function to display notifications with appropriate types (success, error, etc.).
+- Customize the appearance and behavior of toasts using the `ToastContainer` component.
+- Implement proper positioning and stacking of toasts for better user experience.
+- Use the `autoClose` prop to automatically dismiss toasts after a set duration.
+
+---
+name: react-slick-best-practices.mdc
+description: Best practices for using React Slick for carousels
+globs: **/*.{tsx,jsx}
+---
+
+- Use the `settings` object to configure the carousel's behavior and appearance.
+- Implement responsive breakpoints for different screen sizes.
+- Utilize the `beforeChange` and `afterChange` callbacks for custom logic during slide transitions.
+- Optimize performance by using `lazyLoad` for images in the carousel.
