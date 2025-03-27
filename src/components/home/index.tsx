@@ -37,20 +37,20 @@ export function SearchInput() {
 export function TagNav({ tags }: { tags: Record<string, string[]> }) {
   const { user, login } = useAuthStore();
   const router = useRouter();
-  function handleClick(title: string, tag: string) {
-    if (!user) login();
-    if (title === '热门职位') {
-      scrollToSection(tag);
-    } else if (title === '培训课程') {
-      router.push('/task?type=Training');
-    } else if (title === '测评中心') {
-      router.push('/task?type=PinPinCloudEvaluation');
-    } else if (title === '特色服务' && tag === '背景调查') {
-      router.push('/task?type=BackgroundCheck');
-    } else if (title === '特色服务' && tag === '人才政策') {
-      router.push('/ai');
-    }
-  }
+  // function handleClick(title: string, tag: string) {
+  //   if (!user) login();
+  //   if (title === '热门职位') {
+  //     scrollToSection(tag);
+  //   } else if (title === '培训课程') {
+  //     router.push('/task?type=Training');
+  //   } else if (title === '测评中心') {
+  //     router.push('/task?type=PinPinCloudEvaluation');
+  //   } else if (title === '特色服务' && tag === '背景调查') {
+  //     router.push('/task?type=BackgroundCheck');
+  //   } else if (title === '特色服务' && tag === '人才政策') {
+  //     router.push('/ai');
+  //   }
+  // }
 
   return (
     <div>
@@ -65,7 +65,7 @@ export function TagNav({ tags }: { tags: Record<string, string[]> }) {
                 color="foreground"
                 underline="hover"
                 className="cursor-pointer"
-                onClick={() => handleClick(title, tag)}
+                // onClick={() => handleClick(title, tag)}
               >
                 {tag}
               </Link>

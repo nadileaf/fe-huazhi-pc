@@ -10,7 +10,6 @@ import { entityService } from '@/services/entity';
 import { toast } from 'react-toastify';
 import Loading from '@/components/basic/Loading';
 import { BasicInfo } from './sections/BasicInfo';
-import { AcademicInfo } from './sections/AcademicInfo';
 import { Works } from './sections/Works';
 import { Trainings } from './sections/Trainings';
 import { Certificates } from './sections/Certificates';
