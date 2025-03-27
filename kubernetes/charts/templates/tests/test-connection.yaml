@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: "fe-ciickd-pc"
+  name: "fe-huazhi-pc"
   namespace: {{ .Values.namespace }}
   labels:
-    {{- include "fe-ciickd-pc.labels" . | nindent 4 }}
+    {{- include "fe-huazhi-pc.labels" . | nindent 4 }}
   annotations:
     "helm.sh/hook": test
 spec:
@@ -12,5 +12,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "fe-ciickd-pc.fullname" . }}:{{ .Values.service.port }}']
+      args: ['{{ include "fe-huazhi-pc.fullname" . }}:{{ .Values.service.port }}']
   restartPolicy: Never

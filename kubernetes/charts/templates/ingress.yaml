@@ -1,5 +1,5 @@
 
-{{- $fullName := include "fe-ciickd-pc.fullname" . -}}
+{{- $fullName := include "fe-huazhi-pc.fullname" . -}}
 {{- $svcPort := .Values.service.port -}}
 
 {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
@@ -11,10 +11,10 @@ apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: fe-ciickd-pc
+  name: fe-huazhi-pc
   namespace: {{ .Values.namespace }}
   labels:
-    {{- include "fe-ciickd-pc.labels" . | nindent 4 }}
+    {{- include "fe-huazhi-pc.labels" . | nindent 4 }}
   annotations:
     kubernetes.io/ingress.class: {{ .Values.nginxClass }}
     nginx.ingress.kubernetes.io/proxy-body-size: 512m
@@ -61,13 +61,13 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: fe-ciickd-pc
+                name: fe-huazhi-pc
                 port:
                   number: 80
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: fe-ciickd-pc
+                name: fe-huazhi-pc
                 port:
                   number: 80

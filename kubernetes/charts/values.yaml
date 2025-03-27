@@ -1,4 +1,4 @@
-# Default values for fe-ciickd-pc.
+# Default values for fe-huazhi-pc.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -6,7 +6,7 @@
 # =============  自定义配置  ============= #
 # 镜像地址
 image: 
-  repository: cr.mesoor.com/production/fe-ciickd-pc
+  repository: cr.mesoor.com/production/fe-huazhi-pc
   tag: 0.0.1
   
 # 副本数

@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: fe-ciickd-pc
+  name: fe-huazhi-pc
   namespace: {{ .Values.namespace }}
-  labels: {{ include "fe-ciickd-pc.labels" . | nindent 4 }}
+  labels: {{ include "fe-huazhi-pc.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -11,4 +11,4 @@ spec:
       targetPort: 8080
       protocol: TCP
       name: http
-  selector: {{ include "fe-ciickd-pc.selectorLabels" . | nindent 4 }}
+  selector: {{ include "fe-huazhi-pc.selectorLabels" . | nindent 4 }}

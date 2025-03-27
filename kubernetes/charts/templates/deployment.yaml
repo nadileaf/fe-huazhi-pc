@@ -1,15 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fe-ciickd-pc
+  name: fe-huazhi-pc
   namespace: {{ .Values.namespace }}
   labels:
-    {{- include "fe-ciickd-pc.labels" . | nindent 4 }}
+    {{- include "fe-huazhi-pc.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
-      {{- include "fe-ciickd-pc.selectorLabels" . | nindent 6 }}
+      {{- include "fe-huazhi-pc.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.deployment.podAnnotations }}
@@ -17,7 +17,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "fe-ciickd-pc.selectorLabels" . | nindent 8 }}
+        {{- include "fe-huazhi-pc.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.deployment.imagePullSecrets }}
       imagePullSecrets:

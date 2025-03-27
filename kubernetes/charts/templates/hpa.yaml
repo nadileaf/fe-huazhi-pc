@@ -2,15 +2,15 @@
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: fe-ciickd-pc
+  name: fe-huazhi-pc
   namespace: {{ .Values.namespace }}
   labels:
-    {{- include "fe-ciickd-pc.labels" . | nindent 4 }}
+    {{- include "fe-huazhi-pc.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "fe-ciickd-pc.fullname" . }}
+    name: {{ include "fe-huazhi-pc.fullname" . }}
   minReplicas: {{ .Values.deployment.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.deployment.autoscaling.maxReplicas }}
   metrics:

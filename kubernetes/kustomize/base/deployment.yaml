@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fe-ciickd-pc
+  name: fe-huazhi-pc
 spec:
   selector:
     matchLabels:
-      app: fe-ciickd-pc
+      app: fe-huazhi-pc
   replicas: 1
   template:
     metadata:
       labels:
-        app: fe-ciickd-pc
+        app: fe-huazhi-pc
       annotations:
         sidecar.istio.io/inject: 'false'
     spec:
       containers:
-        - name: fe-ciickd-pc
+        - name: fe-huazhi-pc
           image: cr.mesoor.com/develop/fe-mesoor:d9fdd65a85a535344cb11afff4fd145a17d35f17
           ports:
             - containerPort: 80

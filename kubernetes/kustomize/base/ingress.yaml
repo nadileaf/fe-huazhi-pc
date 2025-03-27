@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: fe-ciickd-pc
+  name: fe-huazhi-pc
   annotations:
     kubernetes.io/ingress.class: tip
     nginx.ingress.kubernetes.io/proxy-body-size: 512m
@@ -21,20 +21,20 @@ spec:
   tls:
     - secretName: nadileaf-tls
   rules:
-    - host: 'exyc.nadileaf.com'
+    - host: 'huazhi.nadileaf.com'
       http:
         paths:
           - path: /(.*)
             pathType: Prefix
             backend:
               service:
-                name: dev-fe-ciickd-pc
+                name: dev-fe-huazhi-pc
                 port:
                   number: 80
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: dev-fe-ciickd-pc
+                name: dev-fe-huazhi-pc
                 port:
                   number: 80

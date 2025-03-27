@@ -1,5 +1,5 @@
 commonLabels:
-  app: fe-ciickd-pc
+  app: fe-huazhi-pc
 
 resources:
   - deployment.yaml

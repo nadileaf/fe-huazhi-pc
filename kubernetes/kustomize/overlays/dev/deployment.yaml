@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fe-ciickd-pc
+  name: fe-huazhi-pc
 spec:
   template:
     spec:
       containers:
-        - name: fe-ciickd-pc
-          image: cr.mesoor.com/develop/fe-ciickd-pc:init
+        - name: fe-huazhi-pc
+          image: cr.mesoor.com/develop/fe-huazhi-pc:init
