@@ -39,7 +39,7 @@ export default function HomeJobs() {
             </div>
           </div>
           <div className="flex items-center justify-between ">
-            <Select
+            {/* <Select
               aria-label="label"
               radius="full"
               className="w-36"
@@ -49,7 +49,7 @@ export default function HomeJobs() {
               {sorts.map((sort) => (
                 <SelectItem key={sort.label}>{sort.label}</SelectItem>
               ))}
-            </Select>
+            </Select> */}
             <div className="ml-8 hover:text-primary cursor-pointer" onClick={handleClickMore}>
               更多
             </div>

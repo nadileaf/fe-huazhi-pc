@@ -134,6 +134,13 @@ export default function Header() {
                 </DropdownTrigger>
                 <DropdownMenu>
                   <DropdownItem
+                    key="business"
+                    startContent={<Icon icon="ic:baseline-business" />}
+                    onClick={() => [window.open(`${process.env.NEXT_PUBLIC_AUTH_URL}`, '_blank')]}
+                  >
+                    切换招聘者
+                  </DropdownItem>
+                  <DropdownItem
                     key="logout"
                     className="text-danger"
                     color="danger"

@@ -1,5 +1,3 @@
-'use client';
-
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'next/navigation';
 import { type SubmitHandler, useForm } from 'react-hook-form';

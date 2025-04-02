@@ -25,14 +25,14 @@ export default function HotJobsPage() {
   return (
     <section className="wrapper pt-10 pb-20">
       <Breadcrumbs>
-        <BreadcrumbItem href="/home">首页</BreadcrumbItem>
-        <BreadcrumbItem href="/school-jobs">热门岗位</BreadcrumbItem>
+        <BreadcrumbItem href="/">首页</BreadcrumbItem>
+        <BreadcrumbItem href="/hot-jobs">热门岗位</BreadcrumbItem>
       </Breadcrumbs>
 
       <div className="flex items-center justify-between pt-10 mb-14">
         <div className="title">热门岗位</div>
         <div className="flex items-center justify-between w-[200px]">
-          <Select
+          {/* <Select
             aria-label="label"
             radius="full"
             className="w-36"
@@ -42,7 +42,7 @@ export default function HotJobsPage() {
             {sorts.map((sort) => (
               <SelectItem key={sort.label}>{sort.label}</SelectItem>
             ))}
-          </Select>
+          </Select> */}
         </div>
       </div>
 
