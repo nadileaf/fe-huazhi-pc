@@ -35,7 +35,7 @@ export default function useHotJobs() {
     state.resume?.data.standardFields.expectations?.[0]?.jobNames || [],
   ]);
 
-  const tabs = useMemo(() => (token ? userJobs : defaultTabs), [token, userJobs]);
+  const tabs = useMemo(() => (token ? userJobs.filter(Boolean) : defaultTabs), [token, userJobs]);
 
   useEffect(() => {
     console.log('currentTab', currentTab, tabs);
