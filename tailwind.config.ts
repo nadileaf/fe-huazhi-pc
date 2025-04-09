@@ -156,7 +156,7 @@ const config: Config = {
           color: 'white !important',
         },
         '.modal-bg': {
-          background: ' linear-gradient(180deg, #FFF0E7 -1.89%, #FFFFFF 34.51%)',
+          background: 'linear-gradient(180deg, #DEFAF7 0%, #FFFFFF 27%, #FFFFFF 100%);',
         },
         '.shadow-bg': {
           background: 'linear-gradient(180deg, #D9D9D9 0%, rgba(255, 255, 255, 0) 100%)',

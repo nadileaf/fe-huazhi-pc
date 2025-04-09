@@ -1,5 +1,4 @@
 import { useRequest } from '@/hooks/useHooks';
-import { taskService } from '@/services/task';
 import { useAuthStore } from '@/stores/auth';
 import {
   formatFileUrl,
@@ -8,15 +7,15 @@ import {
   formatSalaryRange,
 } from '@/utils/format';
 import { Icon } from '@iconify/react';
-import { Chip, Image } from '@nextui-org/react';
+import { Chip, Image, Button } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
-import { toast } from 'react-toastify';
-import { FlowSelector } from '../task/FlowSelector';
+import { useMemo } from 'react';
 import { get } from 'lodash-es';
 import { generateUrl } from '@/utils/common';
 import LocationDisplay from '@/components/basic/LocationDisplay';
 import { entityService } from '@/services/entity';
+import { useMessageBoxContext } from '@/providers/MessageBoxProvider';
+import { QRCodeSVG } from 'qrcode.react';
 
 export function JobCard<T extends EntityModel.BusinessEntity<'Job'> | ProjectModel.Project<'Job'>>({
   data,
@@ -129,6 +128,8 @@ export function JobDetail({
   const { user } = useAuthStore();
   const router = useRouter();
 
+  const { openModal } = useMessageBoxContext();
+
   // 获取公司详情
   const { data: companyDetail } = useRequest(
     () =>
@@ -149,30 +150,31 @@ export function JobDetail({
     }
   };
 
-  const { data: task, run } = useRequest(
-    () => taskService.queryTaskByPayloadId(projectId!, user?.userId || ''),
-    {
-      before: () => !!projectId,
-      refreshDeps: [projectId],
-    },
-  );
+  function handleChat() {
+    const url = `${process.env.NEXT_PUBLIC_WEIXIN_MP_PATH}?r=${encodeURIComponent(
+      `/packages/entity/detail/index?entityType=Job&entityId=${data.meta.openId}`,
+    )}`;
 
-  // const [loading, setLoading] = useState(false);
-
-  // async function handleCreateTask() {
-  //   try {
-  //     if (!projectId) return;
-  //     setLoading(true);
-  //     await taskService.create({
-  //       projectId,
-  //       taskPayloadOpenId: user?.userId || '',
-  //     });
-  //     toast.success('投递成功');
-  //     run();
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
+    console.log('url', url);
+    openModal({
+      body: () => (
+        <div className="flex flex-col items-center py-10">
+          <div className="text-3xl text-black-333">微信扫码，即刻开聊</div>
+          <div className="pt-8 pb-6">
+            <QRCodeSVG value={url} />
+          </div>
+          <div className="flex gap-1 items-center text-black-666">
+            <Icon icon="mdi:line-scan"></Icon>
+            <span>微信扫码后，在小程序打开</span>
+          </div>
+        </div>
+      ),
+      classNames: {
+        base: 'modal-bg',
+      },
+      size: 'xl',
+    });
+  }
 
   return (
     <>
@@ -187,22 +189,9 @@ export function JobDetail({
               <LocationDisplay locations={data.data.standardFields.locations} />
             </div>
           </div>
-          {/* {projectId && (
-            <div>
-              {!task?.stageId ? (
-                <Button
-                  className="primary-gradient-button w-[140px]"
-                  radius="full"
-                  isLoading={loading}
-                  onClick={handleCreateTask}
-                >
-                  前往投递
-                </Button>
-              ) : (
-                <FlowSelector projectId={projectId} taskId={task.taskId} value={task.stageName} />
-              )}
-            </div>
-          )} */}
+          <Button className="primary-gradient-button w-[140px]" radius="full" onClick={handleChat}>
+            我要聊一聊
+          </Button>
         </div>
         <div className="flex items-center flex-wrap gap-2 my-14">
           {data.data.standardFields.tags?.map((tag, index) => (
