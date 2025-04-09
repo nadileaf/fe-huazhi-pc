@@ -16,11 +16,9 @@ export default function EntityDetail({
   params: { type_id: [EntityModel.BusinessEntityType, string] };
   searchParams: { taskId?: string; projectId?: string };
 }) {
-  const { user } = useAuthStore();
   const [entityType, entityId] = params.type_id;
   const { data } = useRequest(() => entityService.queryDetail({ entityType, entityId }), {
-    refreshDeps: [entityType, entityId, user],
-    before: () => !!user || entityType === 'JobOpportunities',
+    refreshDeps: [entityType, entityId],
   });
 
   const router = useRouter();
