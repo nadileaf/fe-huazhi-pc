@@ -10,10 +10,10 @@ export const FooterCopyright: React.FC = () => {
   const { previewFile } = useFilePreview();
 
   function handlePrivacy() {
-    previewFile([{ url: withCdnPrefix('/custom/huazhi/privacy.docx'), fileName: '隐私协议' }]);
+    previewFile([{ url: withCdnPrefix('/custom/huazhi/privacy-0306.docx'), fileName: '隐私协议' }]);
   }
   function handleUserAgreement() {
-    previewFile([{ url: withCdnPrefix('/custom/huazhi/service.docx'), fileName: '用户协议' }]);
+    previewFile([{ url: withCdnPrefix('/custom/huazhi/service-0306.docx'), fileName: '用户协议' }]);
   }
 
   return (

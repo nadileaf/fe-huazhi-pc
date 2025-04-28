@@ -74,7 +74,7 @@ export default function FilePreview({ files, downloadable }: Props) {
       : generateUrl(currentFile.url, { fileName: currentFile.fileName });
     const url = generateUrl(process.env.NEXT_PUBLIC_FILE_PREVIEW_URL, {
       url: Base64.encode(urlParam),
-      watermarkTxt: 'e校优才',
+      watermarkTxt: '华智出海人才',
     });
     createIframe('src', url);
   }
