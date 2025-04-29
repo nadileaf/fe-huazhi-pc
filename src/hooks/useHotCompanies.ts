@@ -29,12 +29,12 @@ export default function useHotJobs() {
 
   const tabs = useMemo(() => (token ? userIndustries : defaultTabs), [token, userIndustries]);
 
-  useEffect(() => {
-    console.log('currentTab', currentTab, tabs);
-    if (!currentTab && tabs.length) {
-      setCurrentTab(tabs[0]);
-    }
-  }, [tabs, currentTab]);
+  // useEffect(() => {
+  //   console.log('currentTab', currentTab, tabs);
+  //   if (!currentTab && tabs.length) {
+  //     setCurrentTab(tabs[0]);
+  //   }
+  // }, [tabs, currentTab]);
 
   const { data, loading } = useRequest(() => query(), {
     refreshDeps: [currentPage, currentSort, currentTab],

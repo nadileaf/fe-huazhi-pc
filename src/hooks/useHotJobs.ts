@@ -37,12 +37,12 @@ export default function useHotJobs() {
 
   const tabs = useMemo(() => (token ? userJobs.filter(Boolean) : defaultTabs), [token, userJobs]);
 
-  useEffect(() => {
-    console.log('currentTab', currentTab, tabs);
-    if (tabs.length) {
-      setCurrentTab(tabs[0]);
-    }
-  }, [tabs]);
+  // useEffect(() => {
+  //   console.log('currentTab', currentTab, tabs);
+  //   if (tabs.length) {
+  //     setCurrentTab(tabs[0]);
+  //   }
+  // }, [tabs]);
 
   const { data, loading } = useRequest(() => query(), {
     refreshDeps: [currentPage, currentSort, currentTab],

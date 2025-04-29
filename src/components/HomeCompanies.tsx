@@ -31,7 +31,9 @@ export default function HomeJobs() {
                 <span
                   key={tab}
                   className={`text-lg text-black cursor-pointer hover:text-primary ${currentTab === tab ? 'text-primary' : ''}`}
-                  onClick={() => setCurrentTab(tab)}
+                  onClick={() => {
+                    setCurrentTab(tab !== currentTab ? tab : '');
+                  }}
                 >
                   {tab}
                 </span>

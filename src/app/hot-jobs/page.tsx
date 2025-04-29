@@ -58,6 +58,7 @@ export default function HotJobsPage() {
         }}
         onSelectionChange={(v) => setCurrentTab(v.toString())}
       >
+        <Tab key="" title="全部" className="text-xl"></Tab>
         {tabs.map((tab) => (
           <Tab key={tab} title={tab} className="text-xl"></Tab>
         ))}
@@ -65,18 +66,20 @@ export default function HotJobsPage() {
 
       <Loading loading={loading}>
         {data?.data.length ? (
-          <div className="grid grid-cols-3 gap-8">
-            {data?.data.map((item) => <HotJobCard key={item.meta.openId} data={item} />)}
+          <div>
+            <div className="grid grid-cols-3 gap-8">
+              {data?.data.map((item) => <HotJobCard key={item.meta.openId} data={item} />)}
+            </div>
+            <Pagination
+              className="mt-10 w-full flex items-center justify-center"
+              total={pagesCount}
+              current={currentPage}
+              onChange={setCurrentPage}
+            />
           </div>
         ) : (
           <NoData className="py-24" />
         )}
-        <Pagination
-          className="mt-10 w-full flex items-center justify-center"
-          total={pagesCount}
-          current={currentPage}
-          onChange={setCurrentPage}
-        />
       </Loading>
     </section>
   );
