@@ -39,10 +39,10 @@ export default function useHotJobs() {
 
   useEffect(() => {
     console.log('currentTab', currentTab, tabs);
-    if (!currentTab && tabs.length) {
+    if (tabs.length) {
       setCurrentTab(tabs[0]);
     }
-  }, [tabs, currentTab]);
+  }, [tabs]);
 
   const { data, loading } = useRequest(() => query(), {
     refreshDeps: [currentPage, currentSort, currentTab],
