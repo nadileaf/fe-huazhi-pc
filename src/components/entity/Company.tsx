@@ -48,12 +48,15 @@ export function CompanyDetail({
       <div className="wrapper py-10">
         <div className="bg-white rounded-lg p-8 mb-8">
           <div className="flex items-start gap-6">
-            <Image
-              src={formatFileUrl(standardFields.logo?.key)}
-              alt={standardFields.name}
-              className="w-24 h-24 flex-shrink-0"
-              classNames={{ img: 'object-cover' }}
-            />
+            {standardFields.logo?.key && (
+              <Image
+                src={formatFileUrl(standardFields.logo?.key)}
+                alt={standardFields.name}
+                width={100}
+                height={100}
+                classNames={{ img: 'object-cover', wrapper: ' flex-shrink-0' }}
+              />
+            )}
             <div className="flex-1">
               <h1 className="text-3xl font-bold mb-3">{standardFields.name}</h1>
               <p className="text-gray-600 mb-4 line-clamp-2">{standardFields.profile}</p>
