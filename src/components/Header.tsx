@@ -40,6 +40,9 @@ export default function Header() {
 
   const { openModal } = useMessageBoxContext();
 
+  const [isLoadingLoginC, setIsLoadingLoginC] = useState(false);
+  const [isLoadingLoginB, setIsLoadingLoginB] = useState(false);
+
   const [shortCodeId, setShortCodeId] = useState<string | undefined>(undefined);
   const [shortCodeCreated, setShortCodeCreated] = useState<boolean>(false);
 
@@ -55,8 +58,6 @@ export default function Header() {
       refreshDeps: [shortCodeCreated, shortCodeId],
       pollingInterval: 2000,
       onSuccess: (res) => {
-        router.replace('/?auth=1');
-
         const content = res.data.standardFields.content;
         if (!content) return;
         const { userType, token } = safeJSONParse(content) || ({} as any);
@@ -65,16 +66,35 @@ export default function Header() {
         cancel();
         setUserType(userType);
         setToken(token);
+        router.replace('/?auth=1');
       },
     },
   );
 
+  function handleLoadingLogin(type: 'share' | 'business', loading: boolean) {
+    if (type === 'share') {
+      setIsLoadingLoginC(loading);
+    } else {
+      setIsLoadingLoginB(loading);
+    }
+  }
+
+  function resetShortCode() {
+    setShortCodeId(undefined);
+    setShortCodeCreated(false);
+  }
+
   // 点击登录展示一个二维码弹窗，引导用户微信扫码到小程序注册登录B或者C
-  async function handleLogin() {
+  async function handleLogin(type: 'share' | 'business') {
+    resetShortCode();
+
+    handleLoadingLogin(type, true);
+
     // 生成一个唯一id
     const id = nanoid();
     setShortCodeId(id);
     console.log('id', id);
+
     // 生成二维码，路径为小程序的身份登录页面
     const url = `${process.env.NEXT_PUBLIC_WEIXIN_MP_PATH}?r=${encodeURIComponent(
       `pages/auth/switch-identity?uuid=${id}`,
@@ -92,6 +112,8 @@ export default function Header() {
       setShortCodeCreated(true);
     } catch (error) {
       console.error(error);
+    } finally {
+      handleLoadingLogin(type, false);
     }
 
     // 小程序身份选择登录,往这个 id 的 ShortCode 实体存 userType 和 token
@@ -223,14 +245,16 @@ export default function Header() {
                 color="primary"
                 radius="full"
                 variant="ghost"
-                onClick={() => handleLogin()}
+                isLoading={isLoadingLoginB}
+                onClick={() => handleLogin('business')}
               >
                 我是企业
               </Button>
               <Button
                 className="w-[120px] primary-gradient-button"
                 radius="full"
-                onClick={() => handleLogin()}
+                isLoading={isLoadingLoginC}
+                onClick={() => handleLogin('share')}
               >
                 我是人才
               </Button>
