@@ -219,7 +219,7 @@ export default function Header() {
                   <DropdownItem
                     key="business"
                     startContent={<Icon icon="ic:baseline-business" />}
-                    onClick={() => handleLogin()}
+                    onClick={() => handleLogin('business')}
                   >
                     切换招聘者
                   </DropdownItem>
