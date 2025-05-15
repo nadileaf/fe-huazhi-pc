@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { authService } from '@/services/auth';
 import { storageStore } from '@/utils/common';
 import { entityService } from '@/services/entity';
+import Cookies from 'js-cookie';
 
 type Route = {
   title: string;
@@ -11,6 +12,7 @@ type Route = {
 };
 
 interface State {
+  userType?: UserModel.UserType;
   token?: string;
   user?: UserModel.User;
   tenant?: string;
@@ -24,9 +26,10 @@ interface State {
 }
 
 interface Actions {
+  setUserType: (userType?: UserModel.UserType) => void;
   setToken: (token?: string) => void;
   initUser: () => Promise<void>;
-  setUser: (user: UserModel.User) => void;
+  setUser: (user?: UserModel.User) => void;
   setTenant: (tenant: string) => void;
   setSelfTenantMemberId: (selfTenantMemberId: string) => void;
   setResume: () => void;
@@ -44,6 +47,7 @@ const storage = storageStore('AUTH');
 const defaultRoutes = [{ title: '首页', href: '/' }];
 
 export const useAuthStore = create<State & Actions>((set, get) => ({
+  userType: undefined,
   token: process.env.NEXT_PUBLIC_LOCAL_TOKEN || undefined,
   user: undefined,
   tenant: undefined,
@@ -55,7 +59,15 @@ export const useAuthStore = create<State & Actions>((set, get) => ({
   authRoutes: [...defaultRoutes],
   setToken: (token?: string) => {
     set({ token, user: undefined });
+    if (token) {
+      Cookies.set('token', token);
+    } else {
+      Cookies.remove('token');
+    }
     get().setLogging(false);
+  },
+  setUserType: (userType?: UserModel.UserType) => {
+    set({ userType });
   },
 
   initUser: async () => {
@@ -81,7 +93,7 @@ export const useAuthStore = create<State & Actions>((set, get) => ({
   setLoading: (val: boolean) => {
     set({ loading: val });
   },
-  setUser: (user: UserModel.User) => {
+  setUser: (user?: UserModel.User) => {
     set({ user });
   },
   setTenant: (tenant: string) => {
@@ -91,8 +103,13 @@ export const useAuthStore = create<State & Actions>((set, get) => ({
     set({ selfTenantMemberId });
   },
   setResume: async () => {
+    const user = get().user;
+    if (!user) {
+      set({ resume: undefined });
+      return;
+    }
     const resume = await entityService.queryDetail({
-      entityId: get().user?.userId || '',
+      entityId: user.userId,
       entityType: 'Resume',
     });
     set({ resume });
@@ -104,8 +121,15 @@ export const useAuthStore = create<State & Actions>((set, get) => ({
     set({ logging: val });
     storage?.set('logging', val);
   },
-  login(userType: UserModel.UserType) {
+  login() {
     get().setIsLogout(false);
+    const userType = get().userType;
+    if (!userType) return;
+    if (userType === 'share') {
+      get().initUser();
+    } else {
+      authService.loginBusiness();
+    }
     // if (get().logging) {
     //   console.log('logging');
     //   location.replace('/');
@@ -114,11 +138,13 @@ export const useAuthStore = create<State & Actions>((set, get) => ({
     // }
     // get().setLogging(true);
 
-    authService.redirectAuthPage(userType);
+    // authService.redirectAuthPage(userType);
   },
   logout: () => {
     get().setIsLogout(true);
-    set({ token: undefined, user: undefined, resume: undefined });
+    get().setToken();
+    get().setUser();
+    get().setResume();
     get().setAuthRoutes();
   },
   setIsLogout: (val: boolean) => {

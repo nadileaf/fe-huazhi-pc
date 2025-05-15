@@ -24,12 +24,17 @@ type RequestOptions<T> = {
   retryCount?: number;
   retryInterval?: number;
   pollingInterval?: number;
+  stopPolling?: boolean;
 };
 
-export function useRequest<T>(request: () => Promise<T>, options?: RequestOptions<T>) {
+export function useRequest<T>(
+  request: (signal?: AbortSignal) => Promise<T>,
+  options?: RequestOptions<T>,
+) {
   const [data, setData] = useState<T | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | undefined>(undefined);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const {
     refreshDeps = [],
@@ -51,17 +56,41 @@ export function useRequest<T>(request: () => Promise<T>, options?: RequestOption
     }
   }, []);
 
+  const cancel = useCallback(() => {
+    console.log('cancel');
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    clearPolling();
+    setLoading(false);
+  }, [clearPolling]);
+
   const run = useCallback(async () => {
     let attempts = 0;
 
     const executeRequest = async () => {
       try {
+        // Cancel any existing request
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+        }
+
+        // Create a new AbortController
+        abortControllerRef.current = new AbortController();
+        const signal = abortControllerRef.current.signal;
+
         setLoading(true);
-        const res = await request();
+        const res = await request(signal);
         setData(res);
         onSuccess?.(res);
         return true;
       } catch (err) {
+        // Don't set error state if request was intentionally aborted
+        if (err instanceof DOMException && err.name === 'AbortError') {
+          return false;
+        }
+
         console.error(err);
         setError(err instanceof Error ? err : new Error(String(err)));
         onError?.(err instanceof Error ? err : new Error(String(err)));
@@ -92,14 +121,23 @@ export function useRequest<T>(request: () => Promise<T>, options?: RequestOption
       if (manual) return;
       if (before && !before()) return;
       run();
-      return () => clearPolling();
+      return () => {
+        cancel();
+      };
     },
     [...refreshDeps, clearPolling],
     debounceOptions,
   );
 
+  useEffect(() => {
+    return () => {
+      cancel();
+    };
+  }, [cancel]);
+
   return {
     run,
+    cancel,
     data,
     setData,
     loading,

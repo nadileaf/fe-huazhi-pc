@@ -22,11 +22,8 @@ export const authService = {
     const schoolList = res.filter((item) => item.industry === '教育');
     return schoolList;
   },
-  redirectAuthPage(userType: UserModel.UserType) {
+  loginBusiness() {
     const authUrl = process.env.NEXT_PUBLIC_AUTH_URL;
-
-    // 如果是 share 就登陆完重定向回来，如果是business 就不用回来了
-    window.location.href =
-      userType === 'share' ? generateUrl(authUrl, { redirect: window.location.href }) : authUrl;
+    window.location.href = authUrl;
   },
 };
