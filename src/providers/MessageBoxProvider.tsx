@@ -1,5 +1,5 @@
 'use client';
-import { useState, createContext, useContext, useCallback, useEffect } from 'react';
+import { useState, createContext, useContext, useCallback } from 'react';
 import {
   Modal,
   type ModalProps as _ModalProps,
@@ -9,6 +9,8 @@ import {
   ModalHeader,
   Button,
 } from '@nextui-org/react';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { useDebouncedEffect } from '@/hooks/useHooks';
 
 type ModalProps = Partial<_ModalProps> & {
   id: string | number;
@@ -33,9 +35,15 @@ export const useMessageBoxContext = () => useContext(MessageBoxContext);
 export const MessageBoxProvider = ({ children }: { children: React.ReactNode }) => {
   const [modals, setModals] = useState<ModalProps[]>([]);
 
-  const clearModals = useCallback(() => {
-    setModals([]);
-  }, []);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  useDebouncedEffect(
+    () => {
+      setModals([]);
+    },
+    [pathname, searchParams],
+    100,
+  );
 
   const openModal = useCallback(({ classNames, ...modalContent }: Omit<ModalProps, 'id'>) => {
     return new Promise<any>((resolve, reject) => {
@@ -43,12 +51,18 @@ export const MessageBoxProvider = ({ children }: { children: React.ReactNode }) 
       const newModal: ModalProps = {
         id,
         shadow: 'lg',
-        placement: 'center',
         ...modalContent,
         resolve,
         reject,
-        close: () => setModals((prevModals) => prevModals.filter((modal) => modal.id !== id)),
+        close: () =>
+          setTimeout(
+            () => setModals((prevModals) => prevModals.filter((modal) => modal.id !== id)),
+            100,
+          ),
         classNames: {
+          base: 'bg-background',
+          header: 'pb-0',
+          body: 'py-5',
           ...classNames,
         },
       };
@@ -64,6 +78,7 @@ export const MessageBoxProvider = ({ children }: { children: React.ReactNode }) 
         body: message,
         footer: ({ resolve, close }) => (
           <Button
+            color="primary"
             onClick={() => {
               resolve?.();
               close?.();
@@ -89,6 +104,7 @@ export const MessageBoxProvider = ({ children }: { children: React.ReactNode }) 
                 reject?.();
                 close?.();
               }}
+              variant="light"
             >
               Cancel
             </Button>
@@ -115,42 +131,64 @@ export const MessageBoxProvider = ({ children }: { children: React.ReactNode }) 
   };
 
   return (
-    <MessageBoxContext.Provider value={exposes}>
-      {children}
-      {modals.map(({ id, resolve, reject, title, header, body, footer, close, ...rest }) => (
-        <Modal
-          {...rest}
-          key={id}
-          isOpen={true}
-          onClose={() => {
-            reject?.(id);
-            close?.();
-          }}
-        >
-          <ModalContent>
-            {title && <ModalHeader>{title}</ModalHeader>}
-            {header && (
-              <ModalHeader>
-                {typeof header === 'function'
-                  ? header({ id, resolve, reject, close, header, body, footer, ...rest })
-                  : header}
-              </ModalHeader>
-            )}
-            <ModalBody>
-              {typeof body === 'function'
-                ? body({ id, resolve, reject, header, close, body, footer, ...rest })
-                : body}
-            </ModalBody>
-            {footer && (
-              <ModalFooter>
-                {typeof footer === 'function'
-                  ? footer({ id, resolve, reject, close, header, body, footer, ...rest })
-                  : footer}
-              </ModalFooter>
-            )}
-          </ModalContent>
-        </Modal>
-      ))}
-    </MessageBoxContext.Provider>
+    <>
+      <MessageBoxContext.Provider value={exposes}>
+        {children}
+        {modals.map(({ id, resolve, reject, header, body, footer, close, ...rest }) => (
+          <Modal
+            {...rest}
+            key={id}
+            defaultOpen={true}
+            scrollBehavior="inside"
+            onClose={() => {
+              reject?.(id);
+              close?.();
+            }}
+            motionProps={{
+              variants: {
+                enter: {
+                  y: 0,
+                  opacity: 1,
+                  transition: {
+                    duration: 0.3,
+                    ease: 'easeOut',
+                  },
+                },
+                exit: {
+                  y: -20,
+                  opacity: 0,
+                  transition: {
+                    duration: 0.2,
+                    ease: 'easeIn',
+                  },
+                },
+              },
+            }}
+          >
+            <ModalContent>
+              {header && (
+                <ModalHeader>
+                  {typeof header === 'function'
+                    ? header({ id, resolve, reject, close, header, body, footer, ...rest })
+                    : header}
+                </ModalHeader>
+              )}
+              <ModalBody>
+                {typeof body === 'function'
+                  ? body({ id, resolve, reject, header, close, body, footer, ...rest })
+                  : body}
+              </ModalBody>
+              {footer && (
+                <ModalFooter>
+                  {typeof footer === 'function'
+                    ? footer({ id, resolve, reject, close, header, body, footer, ...rest })
+                    : footer}
+                </ModalFooter>
+              )}
+            </ModalContent>
+          </Modal>
+        ))}
+      </MessageBoxContext.Provider>
+    </>
   );
 };

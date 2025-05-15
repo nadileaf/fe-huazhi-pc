@@ -52,6 +52,7 @@ export type EntityCreateParams<
   openId?: string;
   schema?: string;
   data: EntityModel.BusinessEntity<T>['data'];
+  overwrite?: boolean;
 };
 
 export type RecommendParams = {
@@ -254,12 +255,17 @@ export const entityService = {
     openId,
     schema,
     data,
+    overwrite = false,
   }: EntityCreateParams<T>) {
+    const apiUrl = generateUrl(mesoorSpacePrefixUrl(`/v2/entities/${entityType}`), {
+      openId,
+      schema,
+    });
     try {
-      const apiUrl = generateUrl(mesoorSpacePrefixUrl(`/v2/entities/${entityType}`), {
-        openId,
-        schema,
-      });
+      if (overwrite) {
+        const result = await request.put<EntityModel.BusinessEntity<T>>(apiUrl, data);
+        return result;
+      }
       const result = await request.post<EntityModel.BusinessEntity<T>>(apiUrl, data);
       return result;
     } catch (error) {

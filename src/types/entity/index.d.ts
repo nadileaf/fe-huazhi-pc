@@ -37,6 +37,7 @@ declare namespace EntityModel {
     JobOpportunities: JobOpportunitiesModel.JobOpportunities;
     Training: TrainingModel.Training;
     Company: CompanyModel.Company;
+    ShortCode: ShortCodeModel.ShortCode;
   };
 
   /** @description 素材库实体信息,继承自SchemaEntity */

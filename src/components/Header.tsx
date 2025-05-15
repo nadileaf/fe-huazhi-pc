@@ -23,20 +23,104 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useFilePreview } from '@/components/basic/FilePreview';
 import { useCitySelector } from './basic/CitySelector';
 import { useMobile } from '@/hooks/useHooks';
+import { QRCodeSVG } from 'qrcode.react';
+import { useMessageBoxContext } from '@/providers/MessageBoxProvider';
+import { nanoid } from 'nanoid';
+import { entityService } from '@/services/entity';
+import { useRequest } from '@/hooks/useHooks';
+import { useState } from 'react';
+import { safeJSONParse } from '@/utils/common';
 
 type Route = { title: string; href?: string; target?: '_blank'; onClick?: () => void };
 
 export default function Header() {
   const router = useRouter();
-  const { user, resume, authRoutes, login, logout } = useAuthStore();
+  const { user, resume, authRoutes, logout, setToken, setUserType } = useAuthStore();
   const pathname = usePathname();
-  const { isMobile } = useMobile();
 
-  const { previewFile } = useFilePreview();
-  function handlePrivacy() {
-    previewFile([
-      { url: withCdnPrefix('/custom/ciickd/exiaoyoucai-privacy.docx'), fileName: '隐私协议' },
-    ]);
+  const { openModal } = useMessageBoxContext();
+
+  const [shortCodeId, setShortCodeId] = useState<string | undefined>(undefined);
+  const [shortCodeCreated, setShortCodeCreated] = useState<boolean>(false);
+
+  // pc 用 uuid 去轮询这个实体：如果userType 是 share，就用token直接登录；如果userType 是 business, 则携带 token 跳转到 tip（同一个根域名）登录。
+  const { cancel } = useRequest(
+    (signal) =>
+      entityService.queryDetail({
+        entityType: 'ShortCode',
+        entityId: shortCodeId,
+      }),
+    {
+      before: () => shortCodeCreated && !!shortCodeId,
+      refreshDeps: [shortCodeCreated, shortCodeId],
+      pollingInterval: 2000,
+      onSuccess: (res) => {
+        router.replace('/?auth=1');
+
+        const content = res.data.standardFields.content;
+        if (!content) return;
+        const { userType, token } = safeJSONParse(content) || ({} as any);
+        if (!token || !userType) return;
+
+        cancel();
+        setUserType(userType);
+        setToken(token);
+      },
+    },
+  );
+
+  // 点击登录展示一个二维码弹窗，引导用户微信扫码到小程序注册登录B或者C
+  async function handleLogin() {
+    // 生成一个唯一id
+    const id = nanoid();
+    setShortCodeId(id);
+    console.log('id', id);
+    // 生成二维码，路径为小程序的身份登录页面
+    const url = `${process.env.NEXT_PUBLIC_WEIXIN_MP_PATH}?r=${encodeURIComponent(
+      `pages/auth/switch-identity?uuid=${id}`,
+    )}`;
+
+    try {
+      // 创建一个实体，id为这个 uuid
+      await entityService.create({
+        entityType: 'ShortCode',
+        openId: id,
+        data: {
+          standardFields: {},
+        },
+      });
+      setShortCodeCreated(true);
+    } catch (error) {
+      console.error(error);
+    }
+
+    // 小程序身份选择登录,往这个 id 的 ShortCode 实体存 userType 和 token
+
+    console.log('login url', url);
+    openModal({
+      body: ({ close }) => (
+        <div className="flex flex-col items-center py-10">
+          <div className="text-3xl text-black-333">微信扫码，即刻登录</div>
+          <div className="pt-8 pb-6">
+            <QRCodeSVG value={url} />
+          </div>
+          <div className="flex gap-1 items-center text-black-666">
+            <Icon icon="mdi:line-scan"></Icon>
+            <span>微信扫码后，在小程序打开</span>
+          </div>
+        </div>
+      ),
+
+      classNames: {
+        base: 'modal-bg',
+      },
+      onClose: () => {
+        cancel();
+        setShortCodeId(undefined);
+        setShortCodeCreated(false);
+      },
+      size: 'xl',
+    });
   }
 
   const isActiveRoute = (route: Route) => {
@@ -74,24 +158,6 @@ export default function Header() {
             alt=""
             className="max-w-[150px] max-h-[50px]"
           />
-          {/* {user ? (
-          <>
-            {user?.currentTenant?.tenantName && (
-              <span className="font-medium">{user?.currentTenant?.tenantName || ''}</span>
-            )}
-            {['/', '/search'].includes(pathname) && (
-              <Button
-                variant="light"
-                size="sm"
-                className="text-default-500 ml-3"
-                onClick={() => openCitySelector({ isLocationCity: true })}
-              >
-                <Icon icon="akar-icons:location" />
-                {locationLoading ? '定位中' : currentLocation.city || '全国'}
-              </Button>
-            )}
-          </>
-        ) : null} */}
         </NavbarBrand>
         <NavbarContent className="max-sm:hidden">
           {authRoutes.map((route, index) => (
@@ -111,11 +177,6 @@ export default function Header() {
       </NavbarContent>
 
       <NavbarContent justify="end">
-        {/* {user && (
-          <NavbarItem>
-            <SearchInput></SearchInput>
-          </NavbarItem>
-        )} */}
         <NavbarItem>
           {user ? (
             <div className="flex items-center gap-3">
@@ -136,7 +197,7 @@ export default function Header() {
                   <DropdownItem
                     key="business"
                     startContent={<Icon icon="ic:baseline-business" />}
-                    onClick={() => [window.open(`${process.env.NEXT_PUBLIC_AUTH_URL}`, '_blank')]}
+                    onClick={() => handleLogin()}
                   >
                     切换招聘者
                   </DropdownItem>
@@ -162,14 +223,14 @@ export default function Header() {
                 color="primary"
                 radius="full"
                 variant="ghost"
-                onClick={() => login('business')}
+                onClick={() => handleLogin()}
               >
                 我是企业
               </Button>
               <Button
                 className="w-[120px] primary-gradient-button"
                 radius="full"
-                onClick={() => login('share')}
+                onClick={() => handleLogin()}
               >
                 我是人才
               </Button>
