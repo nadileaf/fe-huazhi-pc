@@ -6,6 +6,7 @@ import { MessageBoxProvider } from '@/providers/MessageBoxProvider';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ToastProvider from '@/providers/ToastProvider';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
   title: '华智出海招聘',
@@ -31,11 +32,13 @@ export default function RootLayout({
     <html lang="en">
       <body className="text-foreground bg-background-2">
         <ThemeProvider>
-          <MessageBoxProvider>
-            <ToastProvider>
-              <MainLayout>{children}</MainLayout>
-            </ToastProvider>
-          </MessageBoxProvider>
+          <Suspense>
+            <MessageBoxProvider>
+              <ToastProvider>
+                <MainLayout>{children}</MainLayout>
+              </ToastProvider>
+            </MessageBoxProvider>
+          </Suspense>
         </ThemeProvider>
       </body>
     </html>
