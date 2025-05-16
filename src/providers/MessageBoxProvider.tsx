@@ -22,10 +22,13 @@ type ModalProps = Partial<_ModalProps> & {
   close?: () => void;
 };
 
+type OpenModalProps = Omit<ModalProps, 'id'> & { id?: string };
+
 type MessageBoxContextExposes = {
   alert: (message: React.ReactNode, title?: React.ReactNode) => Promise<any> | undefined;
   confirm: (message: any, title?: string) => Promise<any> | undefined;
-  openModal: (modalContent: Omit<ModalProps, 'id'>) => Promise<any> | undefined;
+  openModal: (modalContent: OpenModalProps) => Promise<any> | undefined;
+  closeModal: (id: string) => void;
 };
 
 const MessageBoxContext = createContext<MessageBoxContextExposes>({} as MessageBoxContextExposes);
@@ -45,11 +48,11 @@ export const MessageBoxProvider = ({ children }: { children: React.ReactNode }) 
     100,
   );
 
-  const openModal = useCallback(({ classNames, ...modalContent }: Omit<ModalProps, 'id'>) => {
+  const openModal = useCallback(({ classNames, id, ...modalContent }: OpenModalProps) => {
     return new Promise<any>((resolve, reject) => {
-      const id = Date.now().toString();
+      const _id = typeof id !== 'undefined' ? id : Date.now().toString();
       const newModal: ModalProps = {
-        id,
+        id: _id,
         shadow: 'lg',
         ...modalContent,
         resolve,
@@ -69,6 +72,10 @@ export const MessageBoxProvider = ({ children }: { children: React.ReactNode }) 
       setModals((prevModals) => [...prevModals, newModal]);
       return newModal;
     });
+  }, []);
+
+  const closeModal = useCallback((id: string) => {
+    setModals((prevModals) => prevModals.filter((modal) => modal.id !== id));
   }, []);
 
   const alert = useCallback(
@@ -128,6 +135,7 @@ export const MessageBoxProvider = ({ children }: { children: React.ReactNode }) 
     alert,
     confirm,
     openModal,
+    closeModal,
   };
 
   return (

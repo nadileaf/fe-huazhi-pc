@@ -38,7 +38,7 @@ export default function Header() {
   const { user, resume, authRoutes, login, logout, setToken, setUserType } = useAuthStore();
   const pathname = usePathname();
 
-  const { openModal } = useMessageBoxContext();
+  const { openModal, closeModal } = useMessageBoxContext();
 
   const [isLoadingLoginC, setIsLoadingLoginC] = useState(false);
   const [isLoadingLoginB, setIsLoadingLoginB] = useState(false);
@@ -64,10 +64,14 @@ export default function Header() {
         if (!token || !userType) return;
 
         cancel();
+
         setUserType(userType);
         setToken(token);
-        router.replace('/?auth=1');
         login(userType);
+
+        if (shortCodeId) {
+          closeModal(shortCodeId);
+        }
       },
     },
   );
@@ -121,6 +125,7 @@ export default function Header() {
 
     console.log('login url', url);
     openModal({
+      id,
       body: ({ close }) => (
         <div className="flex flex-col items-center py-10">
           <div className="text-3xl text-black-333">微信扫码，即刻登录</div>
