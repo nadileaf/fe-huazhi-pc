@@ -35,7 +35,7 @@ type Route = { title: string; href?: string; target?: '_blank'; onClick?: () => 
 
 export default function Header() {
   const router = useRouter();
-  const { user, resume, authRoutes, logout, setToken, setUserType } = useAuthStore();
+  const { user, resume, authRoutes, login, logout, setToken, setUserType } = useAuthStore();
   const pathname = usePathname();
 
   const { openModal } = useMessageBoxContext();
@@ -67,6 +67,7 @@ export default function Header() {
         setUserType(userType);
         setToken(token);
         router.replace('/?auth=1');
+        login(userType);
       },
     },
   );
@@ -97,7 +98,7 @@ export default function Header() {
 
     // 生成二维码，路径为小程序的身份登录页面
     const url = `${process.env.NEXT_PUBLIC_WEIXIN_MP_PATH}?r=${encodeURIComponent(
-      `pages/auth/switch-identity?uuid=${id}`,
+      `/pages/auth/switch-identity?uuid=${id}`,
     )}`;
 
     try {
@@ -132,7 +133,6 @@ export default function Header() {
           </div>
         </div>
       ),
-
       classNames: {
         base: 'modal-bg',
       },
