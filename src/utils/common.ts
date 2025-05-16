@@ -203,3 +203,8 @@ export const loadAsyncScripts = async (paths: string[], delay?: number) => {
     console.error(error);
   }
 };
+
+export const getRootDomain = () => {
+  const host = window.location.host;
+  return host.split('.').slice(-2).join('.');
+};
