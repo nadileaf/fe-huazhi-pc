@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { authService } from '@/services/auth';
-import { storageStore } from '@/utils/common';
+import { getRootDomain, storageStore } from '@/utils/common';
 import { entityService } from '@/services/entity';
 import Cookies from 'js-cookie';
 
@@ -60,9 +60,13 @@ export const useAuthStore = create<State & Actions>((set, get) => ({
   setToken: (token?: string) => {
     set({ token, user: undefined });
     if (token) {
-      Cookies.set('token', token);
+      Cookies.set('token', token, {
+        domain: getRootDomain(),
+      });
     } else {
-      Cookies.remove('token');
+      Cookies.remove('token', {
+        domain: getRootDomain(),
+      });
     }
     get().setLogging(false);
   },
