@@ -23,6 +23,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useFilePreview } from '@/components/basic/FilePreview';
 import { useCitySelector } from './basic/CitySelector';
 import { useMobile } from '@/hooks/useHooks';
+import { useSearch } from '@/hooks/useSearch';
 import { QRCodeSVG } from 'qrcode.react';
 import { useMessageBoxContext } from '@/providers/MessageBoxProvider';
 import { nanoid } from 'nanoid';
@@ -30,13 +31,17 @@ import { entityService } from '@/services/entity';
 import { useRequest } from '@/hooks/useHooks';
 import { useState } from 'react';
 import { safeJSONParse } from '@/utils/common';
+import { SearchIcon } from 'lucide-react';
 
 type Route = { title: string; href?: string; target?: '_blank'; onClick?: () => void };
 
 export default function Header() {
   const router = useRouter();
   const { user, resume, authRoutes, login, logout, setToken, setUserType } = useAuthStore();
+
   const pathname = usePathname();
+
+  const { inputValue, updateInputValue, handleSearchValueUpdate } = useSearch();
 
   const { openModal, closeModal } = useMessageBoxContext();
 
@@ -154,12 +159,18 @@ export default function Header() {
     return pathname === route.href;
   };
 
+  const handleSearch = () => {
+    const query = inputValue.trim();
+    handleSearchValueUpdate();
+    router.push(`/search?q=${encodeURIComponent(query)}`);
+  };
+
   return (
     <Navbar
       classNames={{
         base: 'bg-white',
         wrapper: 'wrapper p-4',
-        content: 'gap-12',
+        content: 'gap-8',
         item: [
           'flex',
           'relative',
@@ -183,7 +194,8 @@ export default function Header() {
           <img
             src={withCdnPrefix('/custom/huazhi/logo-full.png')}
             alt=""
-            className="max-w-[150px] max-h-[50px]"
+            className="h-[60px] cursor-pointer"
+            onClick={() => router.replace('/')}
           />
         </NavbarBrand>
         <NavbarContent className="max-sm:hidden">
@@ -204,6 +216,20 @@ export default function Header() {
       </NavbarContent>
 
       <NavbarContent justify="end">
+        <NavbarItem>
+          <div className="flex items-center gap-2 max-w-sm">
+            <Input
+              value={inputValue}
+              onValueChange={updateInputValue}
+              placeholder="请输入职位名称"
+              startContent={<SearchIcon className="text-gray-400" size={16} />}
+              className="w-full"
+              size="sm"
+              radius="full"
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+            />
+          </div>
+        </NavbarItem>
         <NavbarItem>
           {user ? (
             <div className="flex items-center gap-3">
@@ -244,7 +270,7 @@ export default function Header() {
               </Dropdown>
             </div>
           ) : (
-            <div className="flex items-center gap-10 max-sm:gap-3">
+            <div className="flex items-center gap-4 max-sm:gap-3">
               <Button
                 className="w-[120px]"
                 color="primary"

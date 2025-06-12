@@ -4,16 +4,15 @@ import Loading from '@/components/basic/Loading';
 import NoData from '@/components/basic/NoData';
 import SearchBar from '@/components/SearchBar';
 import Filter from '@/components/filter';
-import SchoolJobCard from '@/components/job/SchoolJobCard';
-import HotJobCard from '@/components/job/HotJobCard';
-import CompanyCard from '@/components/company/CompanyCard';
+import { EntityCardList } from './components/EntityCardList';
 import Pagination from '@/components/basic/Pagination';
 import { Button, Tab, Tabs } from '@nextui-org/react';
 import { useRequest } from '@/hooks/useHooks';
 import { entityService } from '@/services/entity';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useSearch } from '@/hooks/useSearch';
+import { usePathname, useRouter } from 'next/navigation';
 import { entityConfigMap } from '@/config/entity';
-import { type Key, useMemo, useState } from 'react';
+import { type Key, useMemo, useState, useCallback } from 'react';
 
 const tabs: { label: string; value: EntityModel.BusinessEntityType }[] = [
   {
@@ -29,11 +28,12 @@ const tabs: { label: string; value: EntityModel.BusinessEntityType }[] = [
 const pageSize = 9;
 
 export default function Search() {
-  const searchParams = useSearchParams();
+  console.log('render Search');
   const router = useRouter();
   const pathname = usePathname();
 
-  const [searchText, setSearchText] = useState(searchParams.get('query') || '');
+  const { searchValue, inputValue, updateInputValue, handleSearchValueUpdate, searchParams } =
+    useSearch();
 
   const [currentTab, setCurrentTab] = useState(
     (searchParams.get('type') || tabs[0].value) as EntityModel.BusinessEntityType,
@@ -46,11 +46,11 @@ export default function Search() {
   const queryParams = useMemo(() => {
     return {
       entityType: currentTab,
-      query: searchParams.get('query'),
+      query: searchValue,
       filters: editableFilters,
       current: currentPage,
     };
-  }, [currentPage, currentTab, searchParams, editableFilters]);
+  }, [currentPage, currentTab, searchValue, editableFilters]);
 
   const shouldReturnFilters = currentTab === 'Company';
 
@@ -86,49 +86,59 @@ export default function Search() {
     return res;
   }, [currentTab, data]);
 
-  function handleFilterChange(
-    values: SearchModel.FilterValueType[],
-    filter: (typeof filterOptions)[number],
-  ) {
-    const key = filter.key;
-    const index = editableFilters.findIndex((f) => f.key === key);
-    const filters = [...editableFilters];
-    if (index === -1) {
-      filters.push({ key, values });
-    } else {
-      filters[index].values = values;
-    }
-    setEditableFilters(filters);
-    console.log('handleFilterChange', values, filters);
-  }
+  const handleFilterChange = useCallback(
+    (values: SearchModel.FilterValueType[], filter: (typeof filterOptions)[number]) => {
+      const key = filter.key;
+      setEditableFilters((prev) => {
+        const index = prev.findIndex((f) => f.key === key);
+        const filters = [...prev];
+        if (index === -1) {
+          filters.push({ key, values });
+        } else {
+          filters[index].values = values;
+        }
+        return filters;
+      });
+      console.log('handleFilterChange', values);
+    },
+    [],
+  );
 
-  function handleTabChange(v: Key) {
-    setEditableFilters([]);
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('type', v.toString());
-    router.push(`${pathname}?${params.toString()}`);
-    setCurrentTab(v as EntityModel.BusinessEntityType);
-    if (v.toString() === '') resetPage();
-  }
+  const handleTabChange = useCallback(
+    (v: Key) => {
+      setEditableFilters([]);
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('type', v.toString());
+      router.push(`${pathname}?${params.toString()}`);
+      setCurrentTab(v as EntityModel.BusinessEntityType);
+      if (v.toString() === '') resetPage();
+    },
+    [searchParams, pathname, router],
+  );
 
-  function handleSearch() {
+  const handleSearch = useCallback(() => {
+    handleSearchValueUpdate();
     const params = new URLSearchParams();
-    params.set('query', searchText);
+    params.set('query', inputValue);
     params.set('type', currentTab);
     router.push(`${pathname}?${params.toString()}`);
-  }
+  }, [handleSearchValueUpdate, inputValue, currentTab, pathname, router]);
 
-  function resetPage() {
+  const resetPage = useCallback(() => {
     setCurrentPage(1);
-  }
+  }, []);
+
+  const handleClearFilters = useCallback(() => {
+    setEditableFilters([]);
+  }, []);
 
   return (
     <div className="wrapper py-8 ">
       <Loading loading={loading} className="">
         <div className="w-full max-w-7xl mx-auto py-10 px-8 bg-white rounded-lg shadow-sm">
           <SearchBar
-            inputValue={searchText}
-            setInputValue={setSearchText}
+            inputValue={inputValue}
+            setInputValue={updateInputValue}
             handleSearch={handleSearch}
           ></SearchBar>
 
@@ -149,7 +159,7 @@ export default function Search() {
                   size="sm"
                   variant="light"
                   className="text-[#666]"
-                  onClick={() => setEditableFilters([])}
+                  onClick={handleClearFilters}
                 >
                   清空筛选
                 </Button>
@@ -190,42 +200,4 @@ export default function Search() {
       </Loading>
     </div>
   );
-
-  function EntityCardList<T extends EntityModel.BusinessEntityType>({
-    entityType,
-    data,
-  }: {
-    entityType: T;
-    data: EntityModel.BusinessEntity<T>[];
-  }) {
-    return (
-      <div className={`grid gap-8 pb-5 ${entityType === 'Job' ? 'grid-cols-3' : 'grid-cols-2'}`}>
-        {data.map((item) => (
-          <EntityCard
-            key={item.meta.openId}
-            entityType={entityType}
-            data={item as unknown as EntityModel.BusinessEntity<T>}
-          />
-        ))}
-      </div>
-    );
-  }
-}
-
-function EntityCard<T extends EntityModel.BusinessEntityType>({
-  entityType,
-  data,
-}: {
-  entityType: T;
-  data: EntityModel.BusinessEntity<T>;
-}) {
-  switch (entityType) {
-    case 'Job':
-      return <SchoolJobCard data={data as JobModel.Job}></SchoolJobCard>;
-    case 'Company':
-      return <CompanyCard data={data}></CompanyCard>;
-
-    default:
-      return <div>todo</div>;
-  }
 }

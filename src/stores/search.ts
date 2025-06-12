@@ -5,10 +5,12 @@ import { uniq } from 'lodash-es';
 export type SearchHistoryOption = { value: string; label?: string };
 
 interface State {
+  query: string;
   histories: SearchHistoryOption[];
 }
 
 interface Actions {
+  setQuery: (query: string) => void;
   addHistoryOption: (option: SearchHistoryOption) => void;
   removeHistoryOption: (option: SearchHistoryOption) => void;
   setHistoryOption: (option: SearchHistoryOption, action: 'add' | 'remove') => void;
@@ -20,12 +22,16 @@ export const useSearchStore = create<State & Actions>((set, get) => {
   const key = `search-history_${user?.userId || 'default'}`;
 
   return {
+    query: '',
     get histories() {
       return JSON.parse(localStorage.getItem(key) || '[]');
     },
     set histories(value: SearchHistoryOption[]) {
       localStorage.setItem(key, JSON.stringify(value.slice(0, 10)));
       set({ histories: value });
+    },
+    setQuery: (query: string) => {
+      set({ query });
     },
     addHistoryOption: (option: SearchHistoryOption) => {
       get().setHistoryOption(option, 'add');
