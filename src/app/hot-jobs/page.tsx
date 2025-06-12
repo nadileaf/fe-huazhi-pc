@@ -29,7 +29,7 @@ export default function HotJobsPage() {
         <BreadcrumbItem href="/hot-jobs">热门岗位</BreadcrumbItem>
       </Breadcrumbs>
 
-      <div className="flex items-center justify-between pt-10 mb-14">
+      <div className="flex items-center justify-between pt-10 mb-10">
         <div className="title">热门岗位</div>
         <div className="flex items-center justify-between w-[200px]">
           {/* <Select
@@ -53,14 +53,13 @@ export default function HotJobsPage() {
         radius="full"
         className="mb-14"
         classNames={{
-          tabList: 'gap-9',
-          tab: 'h-12 w-[148px] py-2 px-8 border-1 border-[#CCCCCC] bg-white',
+          tabList: 'gap-6',
+          tab: 'h-10 w-28 py-2 px-8 border-1 border-[#CCCCCC] bg-white',
         }}
         onSelectionChange={(v) => setCurrentTab(v.toString())}
       >
-        <Tab key="" title="全部" className="text-xl"></Tab>
         {tabs.map((tab) => (
-          <Tab key={tab} title={tab} className="text-xl"></Tab>
+          <Tab key={tab} title={tab} className="text-base"></Tab>
         ))}
       </Tabs>
 

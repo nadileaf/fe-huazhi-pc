@@ -6,7 +6,7 @@ import { entityService } from '@/services/entity';
 import { get } from 'lodash-es';
 import { generateUrl } from '@/utils/common';
 
-const defaultTabs = ['互联网', '电商', '机械', '金融', '销售'];
+const defaultTabs = ['热门企业', '互联网', '电商', '机械', '金融', '销售'];
 
 const sorts = [
   { label: '匹配度', value: '' },
@@ -20,7 +20,7 @@ export default function useHotJobs() {
 
   const [currentSort, setCurrentSort] = useState(sorts[0]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentTab, setCurrentTab] = useState('');
+  const [currentTab, setCurrentTab] = useState('热门企业');
 
   const [token, userIndustries] = useAuthStore((state) => [
     state.token,
@@ -45,7 +45,7 @@ export default function useHotJobs() {
   ) => {
     return entityService.query({
       entityType: 'Company',
-      query: currentTab,
+      query: currentTab === '热门企业' ? '' : currentTab,
       sort: currentSort.value,
       ...pageOptions,
     });

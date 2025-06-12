@@ -25,14 +25,13 @@ export default function HomeJobs() {
       <div className="wrapper pb-20">
         <div className="flex items-center justify-between pt-20 mb-20">
           <div className="flex items-center gap-12">
-            <div className="title">热门企业</div>
             <div className="flex items-center gap-8">
               {tabs.map((tab) => (
                 <span
                   key={tab}
-                  className={`text-lg text-black cursor-pointer hover:text-primary ${currentTab === tab ? 'text-primary' : ''}`}
+                  className={`text-xl text-black cursor-pointer hover:text-primary ${currentTab === tab ? 'text-primary' : ''}`}
                   onClick={() => {
-                    setCurrentTab(tab !== currentTab ? tab : '');
+                    setCurrentTab(tab);
                   }}
                 >
                   {tab}

@@ -64,7 +64,7 @@ export default function HotJobCard<
       onClick={handleClick}
     >
       <div className="px-7 pt-5 w-full">
-        <div className="font-semibold text-2xl truncate mb-4">{standardFields.name}</div>
+        <div className="font-semibold text-xl truncate mb-4">{standardFields.name}</div>
         <div className="flex items-center gap-2 mb-4 h-7">
           {standardFields.tags?.map((tag, i) => (
             <Chip
@@ -79,7 +79,7 @@ export default function HotJobCard<
           ))}
         </div>
         <div className="flex items-center justify-end mb-5">
-          <span className="text-black-333 text-2xl ">
+          <span className="text-black-333 text-xl ">
             {formatSalaryRange(standardFields.salaryRange?.[0]) || '-'}
           </span>
         </div>

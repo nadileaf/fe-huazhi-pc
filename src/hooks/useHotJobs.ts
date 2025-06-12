@@ -14,7 +14,7 @@ import { generateUrl } from '@/utils/common';
 // 2. entityType: Job; query: ''; sort: currentSort.value
 // 3. 排序逻辑，匹配度就是没有sort，最近就是 meta.updatedAt:desc
 
-const defaultTabs = ['技术主管', '国家经理', '市场主管'];
+const defaultTabs = ['为您推荐', '技术主管', '国家经理', '市场主管'];
 
 const sorts = [
   { label: '匹配度', value: '' },
@@ -28,7 +28,7 @@ export default function useHotJobs() {
 
   const [currentSort, setCurrentSort] = useState(sorts[0]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentTab, setCurrentTab] = useState('');
+  const [currentTab, setCurrentTab] = useState('为您推荐');
 
   const [token, userJobs] = useAuthStore((state) => [
     state.token,
@@ -53,7 +53,7 @@ export default function useHotJobs() {
   ) => {
     return entityService.query({
       entityType: 'Job',
-      query: currentTab,
+      query: currentTab === '为您推荐' ? '' : currentTab,
       sort: currentSort.value,
       ...pageOptions,
     });
