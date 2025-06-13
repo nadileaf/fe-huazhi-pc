@@ -22,7 +22,7 @@ import {
 import { useRouter, usePathname } from 'next/navigation';
 import { useFilePreview } from '@/components/basic/FilePreview';
 import { useCitySelector } from './basic/CitySelector';
-import { useMobile } from '@/hooks/useHooks';
+import { useDebouncedEffect, useMobile } from '@/hooks/useHooks';
 import { useSearch } from '@/hooks/useSearch';
 import { QRCodeSVG } from 'qrcode.react';
 import { useMessageBoxContext } from '@/providers/MessageBoxProvider';
@@ -37,7 +37,8 @@ type Route = { title: string; href?: string; target?: '_blank'; onClick?: () => 
 
 export default function Header() {
   const router = useRouter();
-  const { user, resume, authRoutes, login, logout, setToken, setUserType } = useAuthStore();
+  const { user, resume, authRoutes, login, logout, setToken, setUserType, isLogout, initUser } =
+    useAuthStore();
 
   const pathname = usePathname();
 
@@ -50,6 +51,19 @@ export default function Header() {
 
   const [shortCodeId, setShortCodeId] = useState<string | undefined>(undefined);
   const [shortCodeCreated, setShortCodeCreated] = useState<boolean>(false);
+
+  useDebouncedEffect(
+    () => {
+      const localToken = process.env.NEXT_PUBLIC_LOCAL_TOKEN;
+      console.log('token', localToken);
+      if (localToken && !isLogout) {
+        setToken(localToken);
+        initUser();
+      }
+    },
+    [process.env.NEXT_PUBLIC_LOCAL_TOKEN, isLogout],
+    10,
+  );
 
   // pc 用 uuid 去轮询这个实体：如果userType 是 share，就用token直接登录；如果userType 是 business, 则携带 token 跳转到 tip（同一个根域名）登录。
   const { cancel } = useRequest(
