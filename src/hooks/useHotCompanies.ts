@@ -1,12 +1,13 @@
 import { useRequest } from '@/hooks/useHooks';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'next/navigation';
-import { type ChangeEvent, useEffect, useMemo, useState } from 'react';
+import { type ChangeEvent, useMemo, useState } from 'react';
 import { entityService } from '@/services/entity';
 import { get } from 'lodash-es';
 import { generateUrl } from '@/utils/common';
 
-const defaultTabs = ['互联网', '电商', '机械', '金融', '销售'];
+const fixTabs = ['热门企业'];
+const defaultTabs = [...fixTabs, '互联网', '电商', '机械', '金融', '销售'];
 
 const sorts = [
   { label: '匹配度', value: '' },
@@ -20,14 +21,17 @@ export default function useHotJobs() {
 
   const [currentSort, setCurrentSort] = useState(sorts[0]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentTab, setCurrentTab] = useState('');
+  const [currentTab, setCurrentTab] = useState('热门企业');
 
   const [token, userIndustries] = useAuthStore((state) => [
     state.token,
     state.resume?.data.standardFields.expectations?.[0]?.industryNames || [],
   ]);
 
-  const tabs = useMemo(() => (token ? userIndustries : defaultTabs), [token, userIndustries]);
+  const tabs = useMemo(
+    () => (token ? [...fixTabs, ...userIndustries.filter(Boolean)] : defaultTabs),
+    [token, userIndustries],
+  );
 
   // useEffect(() => {
   //   console.log('currentTab', currentTab, tabs);
@@ -45,7 +49,7 @@ export default function useHotJobs() {
   ) => {
     return entityService.query({
       entityType: 'Company',
-      query: currentTab,
+      query: currentTab === '热门企业' ? '' : currentTab,
       sort: currentSort.value,
       ...pageOptions,
     });

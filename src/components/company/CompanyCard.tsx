@@ -38,16 +38,18 @@ export default function CompanyCard({ data, onClick }: CompanyCardProps) {
           </>
         )}
         <div className="flex-1 min-h-[80px] max-w-full overflow-hidden">
-          <div className="text-2xl font-medium mb-2 truncate">
+          <div className="text-xl font-medium mb-2 truncate">
             {standardFields.name}
             {standardFields.alias && ` (${standardFields.alias})`}
           </div>
-          <div className="text-lg text-[#666] min-h-[20px] truncate">{standardFields.profile}</div>
+          <div className="text-base text-[#666] min-h-[20px] truncate">
+            {standardFields.profile}
+          </div>
           <div className="mt-2 overflow-hidden">
             {standardFields.address ? (
               <LocationDisplay
                 locations={[standardFields.address]}
-                classNames={{ container: 'text-base text-[#666] truncate' }}
+                classNames={{ container: 'text-sm text-[#666] truncate' }}
               />
             ) : null}
           </div>

@@ -1,5 +1,6 @@
 import { Input, Button } from '@nextui-org/react';
 import { SearchIcon } from 'lucide-react';
+import { memo, useCallback } from 'react';
 
 type Props = {
   inputValue: string;
@@ -7,7 +8,16 @@ type Props = {
   handleSearch: () => void;
 };
 
-export default function SearchBar({ inputValue, setInputValue, handleSearch }: Props) {
+export default memo(function SearchBar({ inputValue, setInputValue, handleSearch }: Props) {
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        handleSearch();
+      }
+    },
+    [handleSearch],
+  );
+
   return (
     <div className="flex gap-4 items-center">
       {/* 搜索输入框 */}
@@ -19,7 +29,7 @@ export default function SearchBar({ inputValue, setInputValue, handleSearch }: P
           startContent={<SearchIcon className="text-gray-400" size={20} />}
           className="w-full"
           size="lg"
-          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+          onKeyDown={handleKeyDown}
         />
       </div>
 
@@ -29,4 +39,4 @@ export default function SearchBar({ inputValue, setInputValue, handleSearch }: P
       </Button>
     </div>
   );
-}
+});

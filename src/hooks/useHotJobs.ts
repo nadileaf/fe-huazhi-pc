@@ -1,11 +1,8 @@
 import { useRequest } from '@/hooks/useHooks';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'next/navigation';
-import { type ChangeEvent, useEffect, useMemo, useState } from 'react';
+import { type ChangeEvent, useMemo, useState } from 'react';
 import { entityService } from '@/services/entity';
-import { recommendService } from '@/services/recommend';
-import { truthy } from '@/utils/types';
-import { useAppStore } from '@/stores/app';
 import { get } from 'lodash-es';
 import { generateUrl } from '@/utils/common';
 
@@ -14,7 +11,8 @@ import { generateUrl } from '@/utils/common';
 // 2. entityType: Job; query: ''; sort: currentSort.value
 // 3. 排序逻辑，匹配度就是没有sort，最近就是 meta.updatedAt:desc
 
-const defaultTabs = ['技术主管', '国家经理', '市场主管'];
+const fixTabs = ['为您推荐'];
+const defaultTabs = [...fixTabs, '技术主管', '国家经理', '市场主管'];
 
 const sorts = [
   { label: '匹配度', value: '' },
@@ -28,14 +26,17 @@ export default function useHotJobs() {
 
   const [currentSort, setCurrentSort] = useState(sorts[0]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentTab, setCurrentTab] = useState('');
+  const [currentTab, setCurrentTab] = useState('为您推荐');
 
   const [token, userJobs] = useAuthStore((state) => [
     state.token,
     state.resume?.data.standardFields.expectations?.[0]?.jobNames || [],
   ]);
 
-  const tabs = useMemo(() => (token ? userJobs.filter(Boolean) : defaultTabs), [token, userJobs]);
+  const tabs = useMemo(
+    () => (token ? [...fixTabs, ...userJobs.filter(Boolean)] : defaultTabs),
+    [token, userJobs],
+  );
 
   // useEffect(() => {
   //   console.log('currentTab', currentTab, tabs);
@@ -53,7 +54,7 @@ export default function useHotJobs() {
   ) => {
     return entityService.query({
       entityType: 'Job',
-      query: currentTab,
+      query: currentTab === '为您推荐' ? '' : currentTab,
       sort: currentSort.value,
       ...pageOptions,
     });
