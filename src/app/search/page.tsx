@@ -28,7 +28,6 @@ const tabs: { label: string; value: EntityModel.BusinessEntityType }[] = [
 const pageSize = 9;
 
 export default function Search() {
-  console.log('render Search');
   const router = useRouter();
   const pathname = usePathname();
 
